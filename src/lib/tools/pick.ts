@@ -28,7 +28,7 @@ export function pickState(state: object, config: StorageModuleConfig): object {
  */
 
 export function pick(obj: object, keys: Array<string>): object {
-  return Object.keys(obj).filter(key => keys.includes(key)).reduce(
+  return keys.reduce(
     (acc, key) => ({ ...acc, [key]: obj[key] }),
     {}
   );
