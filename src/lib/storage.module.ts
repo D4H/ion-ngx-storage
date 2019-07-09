@@ -12,7 +12,7 @@ import {
 
 import {
   StorageEffects,
-  storageReducerProvider,
+  provideMetaReducer,
   reducer
 } from './store';
 
@@ -39,7 +39,7 @@ export class StorageModule {
         {
           deps: [STORAGE_CONFIG, Storage],
           provide: META_REDUCERS,
-          useFactory: storageReducerProvider
+          useFactory: provideMetaReducer
         }
       ]
     };
