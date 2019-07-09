@@ -14,7 +14,7 @@ import { StorageModuleConfig } from '../providers';
  * @see https://stackoverflow.com/a/27585758/1433400
  */
 
-export function pickState(state: object, config: StorageModuleConfig): object {
+export function pickState(state: any, config: StorageModuleConfig): any {
   return traverse(pick(state, config.states)).map(function(value: any): void {
     if (isMomentOrDate(value)) {
       this.update(JSON.stringify(value));
@@ -25,9 +25,10 @@ export function pickState(state: object, config: StorageModuleConfig): object {
 /**
  * Pick Values from Object
  * =============================================================================
+ * @see https://stackoverflow.com/a/56162151/1433400
  */
 
-export function pick(obj: object, keys: Array<string>): object {
+export function pick<T extends object, K extends keyof T>(obj: T, keys: Array<K>): Partial<T> {
   return keys.reduce(
     (acc, key) => ({ ...acc, [key]: obj[key] }),
     {}
@@ -44,6 +45,7 @@ export function pick(obj: object, keys: Array<string>): object {
 export function isMomentOrDate(obj: any): boolean {
   return (
     obj && obj._isAMomentObject
-    || obj instanceof Date || Object.prototype.toString.call(obj) === '[object Date]'
+    || obj instanceof Date
+    || Object.prototype.toString.call(obj) === '[object Date]'
   );
 }
