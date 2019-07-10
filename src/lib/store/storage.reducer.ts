@@ -1,19 +1,58 @@
-import { createReducer, on } from '@ngrx/store';
+// tslint:disable no-shadowed-variable
+
+import {
+  Action,
+  createReducer,
+  createSelector,
+  createFeatureSelector,
+  on
+} from '@ngrx/store';
 
 import { HydrationSuccess } from './storage.actions';
 
-export interface State {
+/**
+ * Storage State
+ * ===========================================================================
+ */
+
+export interface StorageState {
   hydrated: boolean;
 }
 
-export const initialState: State = {
+export interface State {
+  storage: StorageState;
+}
+
+/**
+ * Storage Reducer
+ * ===========================================================================
+ * Wrapped in a factory function per bug in NgRX while registering a single
+ * reducer with StoreModule.forFeature.
+ *
+ * @see https://github.com/ngrx/platform/issues/1915
+ */
+
+export const initialState: StorageState = {
   hydrated: false
 };
 
-export const reducer = createReducer(
-  initialState,
+export function reducer(state: StorageState | undefined, action: Action) {
+  return createReducer(
+    initialState,
+    on(HydrationSuccess, (state: StorageState) => ({ hydrated: true }))
+  )(state, action);
+}
 
-  on(HydrationSuccess, (state: State): State => ({
-    hydrated: true
-  }))
+/**
+ * Storage Selectors
+ * ===========================================================================
+ */
+
+export const selectStorageState = createFeatureSelector<State, StorageState>(
+  'storage'
+);
+
+export const selectHydrationStatus = createSelector(
+  selectStorageState,
+  (state: StorageState): boolean => state.hydrated
 );
