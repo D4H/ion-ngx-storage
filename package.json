@@ -1,6 +1,6 @@
 {
   "name": "@d4h/ion-ngx-storage",
-  "version": "0.0.2-beta.0",
+  "version": "0.0.2-beta.1",
   "private": false,
   "description": "Synchronize selected NgRx state slices to native device storage.",
   "homepage": "https://github.com/D4H/ion-ngx-storage",

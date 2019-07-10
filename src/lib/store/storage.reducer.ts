@@ -2,6 +2,7 @@
 
 import {
   Action,
+  ActionReducerMap,
   createReducer,
   createSelector,
   createFeatureSelector,
