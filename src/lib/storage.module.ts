@@ -17,30 +17,18 @@ import {
 } from './providers';
 
 import {
+  REDUCER_TOKEN,
   State,
   StorageEffects,
   provideMetaReducer,
+  provideReducer,
   reducer
 } from './store';
-
-/**
- * Testing
- * =============================================================================
- */
-
-export const REDUCER_TOKEN = new InjectionToken<ActionReducerMap<State>>(
-  'NGX_ION_STORAGE_REDUCERS'
-);
-
-/**
- * Modullleeeeeeeeeee
- * =============================================================================
- */
 
 @NgModule({
   imports: [
     EffectsModule.forRoot([]),
-    // StoreModule.forRoot({}),
+    StoreModule.forRoot({}),
     StoreModule.forFeature('storage', REDUCER_TOKEN),
     EffectsModule.forFeature([StorageEffects])
   ]
@@ -53,22 +41,19 @@ export class StorageModule {
       ngModule: StorageModule,
       providers: [
         {
-          provide: REDUCER_TOKEN,
-          useFactory: () => ({ storage: reducer })
+          provide: STORAGE_CONFIG,
+          useValue: configuration
         },
-        // {
-        //   provide: STORAGE_CONFIG,
-        //   useValue: configuration
-        // },
-        // {
-        //   deps: [STORAGE_CONFIG],
-        //   provide: Storage,
-        //   useFactory: provideStorage
-        // },
+        {
+          deps: [STORAGE_CONFIG],
+          provide: Storage,
+          useFactory: provideStorage
+        },
         // {
         //   deps: [STORAGE_CONFIG, Storage],
         //   provide: META_REDUCERS,
-        //   useFactory: provideMetaReducer
+        //   useFactory: provideMetaReducer,
+        //   multi: true
         // }
       ]
     };

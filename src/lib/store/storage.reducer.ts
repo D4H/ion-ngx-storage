@@ -1,5 +1,7 @@
 // tslint:disable no-shadowed-variable
 
+import { InjectionToken } from '@angular/core';
+
 import {
   Action,
   ActionReducerMap,
@@ -27,22 +29,34 @@ export interface State {
 /**
  * Storage Reducer
  * ===========================================================================
- * Wrapped in a factory function per bug in NgRX while registering a single
+ * Wrapped in a provider object per bug in NgRX while registering a single
  * reducer with StoreModule.forFeature.
  *
  * @see https://github.com/ngrx/platform/issues/1915
+ * @see https://ngrx.io/guide/store/recipes/injecting#injecting-reducers
  */
 
 export const initialState: StorageState = {
   hydrated: false
 };
 
-export function reducer(state: StorageState | undefined, action: Action) {
-  return createReducer(
-    initialState,
-    on(HydrationSuccess, (state: StorageState) => ({ hydrated: true }))
-  )(state, action);
-}
+export const reducer = createReducer(
+  initialState,
+  on(HydrationSuccess, (state: StorageState) => ({ hydrated: true }))
+);
+
+export const provideReducer = {
+  factory() {
+    return {
+      storage: reducer
+    };
+  }
+};
+
+export const REDUCER_TOKEN = new InjectionToken<ActionReducerMap<State>>(
+  'ION_NGX_STORAGE_REDUCERS',
+  provideReducer
+);
 
 /**
  * Storage Selectors
