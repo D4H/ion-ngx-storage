@@ -5,9 +5,9 @@ import { InjectionToken } from '@angular/core';
 import {
   Action,
   ActionReducerMap,
+  createFeatureSelector,
   createReducer,
   createSelector,
-  createFeatureSelector,
   on
 } from '@ngrx/store';
 

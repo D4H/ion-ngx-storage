@@ -29,14 +29,18 @@ export function provideMetaReducer(
 
   return (reducer: ActionReducer<any>) => {
     return (state: any, action: Action) => {
+      console.log('[StorageMetaReducer] Fired.');
+
       const newState = (action.type === ActionTypes.HYDRATION_SUCCESS)
         ? reducer({ ...state, ...(action as Action & { state: object }).state }, action)
         : reducer(state, action);
 
       if (newState && newState.storage && newState.storage.hydrated) {
+        console.log('[StorageMetaReducer] Writing picked slices to device.');
         storage.set(config.key, pickState(newState, config));
       }
 
+      console.log('[StorageMetaReducer] Returning new state.');
       return newState;
     };
   };

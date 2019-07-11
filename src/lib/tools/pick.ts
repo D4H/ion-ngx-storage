@@ -14,8 +14,13 @@ import { StorageModuleConfig } from '../providers';
  * @see https://stackoverflow.com/a/27585758/1433400
  */
 
-export function pickState(state: any, config: StorageModuleConfig): any {
-  return traverse(pick(state, config.states)).map(function(value: any): void {
+export function pickState<T extends object>(
+  state: T,
+  config: StorageModuleConfig
+): Partial<T> {
+  const picked = pick(state, config.states);
+
+  return traverse(picked).map(function(value: any): void {
     if (isMomentOrDate(value)) {
       this.update(JSON.stringify(value));
     }
@@ -28,10 +33,10 @@ export function pickState(state: any, config: StorageModuleConfig): any {
  * @see https://stackoverflow.com/a/56162151/1433400
  */
 
-export function pick<T extends object, K extends keyof T>(obj: T, keys: Array<K>): Partial<T> {
+export function pick<T extends object>(obj: T, keys: Array<string>): Partial<T> {
   return keys.reduce(
-    (acc, key) => ({ ...acc, [key]: obj[key] }),
-    {}
+    (acc: Partial<T>, key: string): Partial<T> => ({ ...acc, [key]: obj[key] }),
+    {} as Partial<T>
   );
 }
 
@@ -42,10 +47,10 @@ export function pick<T extends object, K extends keyof T>(obj: T, keys: Array<K>
  * @see https://github.com/moment/moment/blob/2e2a5b35439665d4b0200143d808a7c26d6cd30f/src/lib/utils/is-date.js
  */
 
-export function isMomentOrDate(obj: any): boolean {
-  return (
-    obj && obj._isAMomentObject
-    || obj instanceof Date
-    || Object.prototype.toString.call(obj) === '[object Date]'
+export function isMomentOrDate(value: any): boolean {
+  return value && (
+    value._isAMomentObject
+    || value instanceof Date
+    || Object.prototype.toString.call(value) === '[object Date]'
   );
 }

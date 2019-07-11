@@ -1,2 +1,2 @@
-export * from './config.provider';
-export * from './storage.provider';
+export * from './module.provider';
+export * from './ngrx.provider';

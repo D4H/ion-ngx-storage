@@ -13,12 +13,12 @@ import {
 } from '@ngrx/effects';
 
 import { ActionTypes, HydrationError, HydrationSuccess } from './storage.actions';
-import { STORAGE_CONFIG, StorageModuleConfig } from '../providers';
+import { MODULE_CONFIG, StorageModuleConfig } from '../providers';
 
 @Injectable()
 export class StorageEffects {
   constructor(
-    @Inject(STORAGE_CONFIG) private readonly config: StorageModuleConfig,
+    @Inject(MODULE_CONFIG) private readonly config: StorageModuleConfig,
     private readonly actions$: Actions,
     private readonly storageService: Storage
   ) {}

@@ -1,17 +1,12 @@
 import { EffectsModule } from '@ngrx/effects';
 import { InjectionToken, ModuleWithProviders, NgModule } from '@angular/core';
+import { META_REDUCERS, StoreModule } from '@ngrx/store';
 import { Storage, StorageConfig, StorageConfigToken } from '@ionic/storage';
 
 import {
-  ActionReducerMap,
-  META_REDUCERS,
-  MetaReducer,
-  StoreModule
-} from '@ngrx/store';
-
-import {
-  STORAGE_CONFIG,
+  MODULE_CONFIG,
   StorageModuleConfig,
+  StoreConfig,
   defaultConfig,
   provideStorage
 } from './providers';
@@ -24,11 +19,16 @@ import {
   reducer
 } from './store';
 
-export const FEATURE_STORE_CONFIG = new InjectionToken<any>(
-  'ION_NGX_STORAGE_CONFIG'
+/**
+ * NgRx Feature Config Provider
+ * =============================================================================
+ */
+
+export const NGRX_FEATURE_CONFIG = new InjectionToken<StoreConfig<State>>(
+  'ION_NGX_NGRX_FEATURE_CONFIG'
 );
 
-export function provideStoreConfig(
+export function provideNgrxConfig(
   config: StorageModuleConfig,
   storage: Storage
 ): any {
@@ -51,34 +51,40 @@ export function provideStoreConfig(
   };
 }
 
+/**
+ * Storage Module Declaration
+ * =============================================================================
+ * TODO: Rename StorageModule. Its name confuses me...
+ */
+
 @NgModule({
   imports: [
     EffectsModule.forRoot([]),
     StoreModule.forRoot({}),
-    StoreModule.forFeature('storage', FEATURE_STORE_CONFIG),
+    StoreModule.forFeature('storage', NGRX_FEATURE_CONFIG),
     EffectsModule.forFeature([StorageEffects])
   ]
 })
 export class StorageModule {
-  static forFeature(configuration?: any): ModuleWithProviders {
+  static forFeature(moduleConfig?: StorageModuleConfig): ModuleWithProviders {
     console.log('[StorageModule] Module initialized.');
 
     return {
       ngModule: StorageModule,
       providers: [
         {
-          provide: STORAGE_CONFIG,
-          useValue: configuration
+          provide: MODULE_CONFIG,
+          useValue: moduleConfig
         },
         {
-          deps: [STORAGE_CONFIG],
+          deps: [MODULE_CONFIG],
           provide: Storage,
           useFactory: provideStorage
         },
         {
-          deps: [STORAGE_CONFIG, Storage],
-          provide: FEATURE_STORE_CONFIG,
-          useFactory: provideStoreConfig
+          deps: [MODULE_CONFIG, Storage],
+          provide: NGRX_FEATURE_CONFIG,
+          useFactory: provideNgrxConfig
         }
       ]
     };
