@@ -31,8 +31,10 @@ export class StorageEffects {
    */
 
   init$: Observable<Action> = createEffect(() => this.actions$.pipe(
+    tap(() => console.log('[StorageEffects] init$ effect fired')),
     ofType(ROOT_EFFECTS_INIT),
     switchMap(() => from(this.storageService.get(this.config.key)).pipe(
+      tap(() => console.log('[StorageEffects] storageService.get() fired successfully')),
       map(state => HydrationSuccess(state)),
       catchError(error => of(HydrationError(error)))
     ))

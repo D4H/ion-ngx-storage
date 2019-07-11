@@ -17,25 +17,51 @@ import {
 } from './providers';
 
 import {
-  REDUCER_TOKEN,
   State,
+  initialState,
   StorageEffects,
   provideMetaReducer,
-  provideReducer,
   reducer
 } from './store';
+
+export const FEATURE_STORE_CONFIG = new InjectionToken<any>(
+  'ION_NGX_STORAGE_CONFIG'
+);
+
+export function provideStoreConfig(
+  config: StorageModuleConfig,
+  storage: Storage
+): any {
+  console.log('[provideStoreConfig] function fired.');
+
+  return {
+    initialState,
+
+    reducerFactory() {
+      console.log('[reducerFactory] function fired.');
+
+      return {
+        storage: reducer
+      };
+    },
+
+    metaReducers: [
+      provideMetaReducer(config, storage)
+    ]
+  };
+}
 
 @NgModule({
   imports: [
     EffectsModule.forRoot([]),
     StoreModule.forRoot({}),
-    StoreModule.forFeature('storage', REDUCER_TOKEN),
+    StoreModule.forFeature('storage', FEATURE_STORE_CONFIG),
     EffectsModule.forFeature([StorageEffects])
   ]
 })
 export class StorageModule {
   static forFeature(configuration?: any): ModuleWithProviders {
-    console.log('[StorageModule] Initialized.');
+    console.log('[StorageModule] Module initialized.');
 
     return {
       ngModule: StorageModule,
@@ -49,12 +75,11 @@ export class StorageModule {
           provide: Storage,
           useFactory: provideStorage
         },
-        // {
-        //   deps: [STORAGE_CONFIG, Storage],
-        //   provide: META_REDUCERS,
-        //   useFactory: provideMetaReducer,
-        //   multi: true
-        // }
+        {
+          deps: [STORAGE_CONFIG, Storage],
+          provide: FEATURE_STORE_CONFIG,
+          useFactory: provideStoreConfig
+        }
       ]
     };
   }

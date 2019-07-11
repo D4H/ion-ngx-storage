@@ -20,10 +20,13 @@ import { pickState } from '../tools';
  *  read back.
  */
 
-export function storageReducerFactory(
+export function provideMetaReducer(
   config: StorageModuleConfig,
   storage: Storage
 ): (reducer: ActionReducer<any>) => (state: any, action: Action) => any {
+  console.log('[provideMetaReducer] Factory function fired.');
+  console.log(config, storage);
+
   return (reducer: ActionReducer<any>) => {
     return (state: any, action: Action) => {
       const newState = (action.type === ActionTypes.HYDRATION_SUCCESS)
@@ -37,19 +40,4 @@ export function storageReducerFactory(
       return newState;
     };
   };
-}
-
-/**
- * Storage Provider Factory
- * =============================================================================
- * Kept separate from the above for sanity, clarity and ease of testing.
- */
-
-export function provideMetaReducer(
-  config: StorageModuleConfig,
-  storage: Storage
-): Array<MetaReducer<any>> {
-  return [
-    storageReducerFactory(config, storage)
-  ];
 }

@@ -45,19 +45,6 @@ export const reducer = createReducer(
   on(HydrationSuccess, (state: StorageState) => ({ hydrated: true }))
 );
 
-export const provideReducer = {
-  factory() {
-    return {
-      storage: reducer
-    };
-  }
-};
-
-export const REDUCER_TOKEN = new InjectionToken<ActionReducerMap<State>>(
-  'ION_NGX_STORAGE_REDUCERS',
-  provideReducer
-);
-
 /**
  * Storage Selectors
  * ===========================================================================
