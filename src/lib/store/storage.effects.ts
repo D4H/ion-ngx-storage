@@ -5,7 +5,12 @@ import { Observable, from, of } from 'rxjs';
 import { Storage } from '@ionic/storage';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-import { HydrationError, HydrationSuccess } from './storage.actions';
+import {
+  StorageHydrationError,
+  StorageHydrationSuccess,
+  StorageReset
+} from './storage.actions';
+
 import { MODULE_CONFIG, IonNgxModuleConfig } from '../providers';
 
 @Injectable()
@@ -26,8 +31,8 @@ export class StorageEffects {
   init$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(ROOT_EFFECTS_INIT),
     switchMap(() => from(this.storage.get(this.config.name)).pipe(
-      map((state: object) => HydrationSuccess({ state })),
-      catchError(error => of(HydrationError(error)))
+      map((state: object) => StorageHydrationSuccess({ state })),
+      catchError(error => of(StorageHydrationError(error)))
     ))
   ));
 
@@ -40,8 +45,21 @@ export class StorageEffects {
    */
 
   error$: Observable<Action> = createEffect(() => this.actions$.pipe(
-    ofType(HydrationError),
+    ofType(StorageHydrationError),
     tap(console.error),
-    map(() => HydrationSuccess({ state: {} }))
+    map(() => StorageHydrationSuccess({ state: {} }))
+  ));
+
+  /**
+   * Reset Storage
+   * ===========================================================================
+   * Useful for testing!
+   */
+
+  reset$: Observable<Action> = createEffect(() => this.actions$.pipe(
+    ofType(StorageReset),
+    switchMap(() => from(this.storage.clear()).pipe(
+      map(() => StorageHydrationSuccess({ state: {} }))
+    ))
   ));
 }

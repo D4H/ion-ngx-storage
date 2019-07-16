@@ -8,7 +8,7 @@ import {
   on
 } from '@ngrx/store';
 
-import { HydrationSuccess } from './storage.actions';
+import { StorageHydrationSuccess } from './storage.actions';
 
 /**
  * Storage State and Reducer
@@ -25,7 +25,7 @@ export const initialState: StorageState = {
 
 export const storageReducer: ActionReducer<StorageState> = createReducer(
   initialState,
-  on(HydrationSuccess, (state: StorageState): StorageState => ({
+  on(StorageHydrationSuccess, (state: StorageState): StorageState => ({
     hydrated: true
   }))
 );
