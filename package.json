@@ -9,6 +9,11 @@
     "email": "mark.grealish@d4h.org",
     "url": "https://github.com/orgs/D4H/people"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/D4H/ion-ngx-storage"
+  },
+  "license": "MIT",
   "peerDependencies": {
     "@angular/common": "~8.1.0",
     "@angular/core": "~8.1.0",
