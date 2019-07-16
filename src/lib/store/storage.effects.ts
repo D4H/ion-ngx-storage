@@ -6,12 +6,12 @@ import { Storage } from '@ionic/storage';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import { HydrationError, HydrationSuccess } from './storage.actions';
-import { MODULE_CONFIG, StorageModuleConfig } from '../providers';
+import { MODULE_CONFIG, IonNgxModuleConfig } from '../providers';
 
 @Injectable()
 export class StorageEffects {
   constructor(
-    @Inject(MODULE_CONFIG) private readonly config: StorageModuleConfig,
+    @Inject(MODULE_CONFIG) private readonly config: IonNgxModuleConfig,
     private readonly actions$: Actions,
     private readonly storage: Storage
   ) {}

@@ -6,7 +6,7 @@ import { Provider } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
 import { ActionTypes } from './storage.actions';
-import { MODULE_CONFIG, StorageModuleConfig } from '../providers';
+import { IonNgxModuleConfig, MODULE_CONFIG } from '../providers';
 
 /**
  * Storage Hydration Meta Reducer
@@ -24,7 +24,7 @@ import { MODULE_CONFIG, StorageModuleConfig } from '../providers';
  */
 
 export function provideMetaReducer<T extends object>(
-  config: StorageModuleConfig,
+  config: IonNgxModuleConfig,
   storage: Storage
 ): (reducer: ActionReducer<T>) => (state: T, action: Action) => T {
   return (reducer: ActionReducer<T>) => {
@@ -86,7 +86,7 @@ export function mergeState<T extends object>(state: T, action: Action): T {
 
 export function pickState<T extends object>(
   state: T,
-  config: StorageModuleConfig
+  config: IonNgxModuleConfig
 ): Partial<T> {
   const keys: Array<string> = config.states;
 

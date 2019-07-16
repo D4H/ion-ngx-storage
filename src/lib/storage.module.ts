@@ -4,8 +4,8 @@ import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 import { Storage, StorageConfig } from '@ionic/storage';
 
 import {
+  IonNgxModuleConfig,
   MODULE_CONFIG,
-  StorageModuleConfig,
   defaultConfig,
   provideStorage
 } from './providers';
@@ -13,16 +13,15 @@ import {
 import { provideMetaReducer } from './store';
 
 /**
- * Storage Module Declaration
+ * IonNgxModule Declaration
  * =============================================================================
- * TODO: Rename StorageModule. This name confuses me...
  */
 
 @NgModule({})
-export class StorageModule {
-  static forRoot(config: StorageModuleConfig = defaultConfig): ModuleWithProviders {
+export class IonNgxModule {
+  static forRoot(config: IonNgxModuleConfig = defaultConfig): ModuleWithProviders {
     return {
-      ngModule: StorageModule,
+      ngModule: IonNgxModule,
       providers: [
         {
           provide: MODULE_CONFIG,

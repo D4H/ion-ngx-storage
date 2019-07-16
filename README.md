@@ -11,7 +11,7 @@ In NgRx store, all eagerly-loaded feature states are visible from the perspectiv
 `npm install --save @d4h/ion-ngx-storage`
 
 ## Configuration
-`StorageModuleConfig` accepts these configuration options:
+`IonNgxModuleConfig` accepts these configuration options:
 
 * `name: string`: The name of your application. Used internally as an Ionic Storage table key. All data is stored _per application_ as a single object.
 * `states?: Array<string>`: Optional array of store states to store to the device instead of the entire application state.
@@ -19,12 +19,12 @@ In NgRx store, all eagerly-loaded feature states are visible from the perspectiv
 * `ionicStorage: StorageConfig`: [Ionic Storage](https://ionicframework.com/docs/building/storage#configuring-storage) configuration.
 
 ## Use
-ion-ngx-storage **must** be added to the root state. `StorageModule` injects its meta reducer through the [`META_REDUCERS`](https://next.ngrx.io/guide/store/recipes/injecting#injecting-meta-reducers) provider.
+ion-ngx-storage **must** be added to the root state. `IonNgxModule` injects its meta reducer through the [`META_REDUCERS`](https://next.ngrx.io/guide/store/recipes/injecting#injecting-meta-reducers) provider.
 
 ```typescript
 import {
+  IonNgxModule,
   StorageEffects,
-  StorageModule,
   StorageState,
   storageReducer
 } from '@d4h/ion-ngx-storage';
@@ -61,7 +61,7 @@ const storageConfig = {
 
 @NgModule({
   imports: [
-    StorageModule.forRoot(storageConfig),
+    IonNgxModule.forRoot(storageConfig),
     StoreModule.forRoot(reducers, { metaReducers }),
     EffectsModule.forRoot(effects)
   ]
