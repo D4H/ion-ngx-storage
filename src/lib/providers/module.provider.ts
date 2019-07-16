@@ -1,9 +1,32 @@
-import { Action, ActionReducerFactory, MetaReducer } from '@ngrx/store';
 import { InjectionToken } from '@angular/core';
 import { Storage, StorageConfig } from '@ionic/storage';
 
-import { State, initialState, provideMetaReducer, reducer } from '../store';
-import { StoreConfig } from './ngrx.provider';
+/**
+ * Storage Module Configuration
+ * =============================================================================
+ * @see https://ionicframework.com/docs/building/storage
+ */
+
+export interface StorageModuleConfig {
+  ionicStorage?: StorageConfig;
+  name: string;
+  reducer: string;
+  states?: Array<string>;
+}
+
+export const defaultConfig: StorageModuleConfig = {
+  name: 'ION_NGX_STORAGE',
+  reducer: 'storage',
+  states: [],
+
+  ionicStorage: {
+    name: 'ion_ngx_storage'
+  }
+};
+
+export const MODULE_CONFIG = new InjectionToken<StorageConfig>(
+  'ION_NGX_MODULE_CONFIG'
+);
 
 /**
  * Ionic Storage Factory Provider
@@ -12,31 +35,8 @@ import { StoreConfig } from './ngrx.provider';
  * @see https://stackoverflow.com/a/43246735/1433400
  */
 
-export function provideStorage(config: Partial<StorageModuleConfig> = {}): Storage {
-  return new Storage(config.storage);
+export function provideStorage(
+  config: Partial<StorageModuleConfig> = defaultConfig
+): Storage {
+  return new Storage(config.ionicStorage);
 }
-
-/**
- * Storage Module Configuration
- * =============================================================================
- * As well as providing
- */
-
-export interface StorageModuleConfig {
-  key: string;
-  states: Array<string>;
-  storage?: StorageConfig;
-}
-
-export const defaultConfig: StorageModuleConfig = {
-  key: 'THUNDERCATS_HOOOOOOO',
-  states: [],
-
-  storage: {
-    name: 'ion_ngx_storage'
-  }
-};
-
-export const MODULE_CONFIG = new InjectionToken<StorageConfig>(
-  'ION_NGX_MODULE_CONFIG'
-);

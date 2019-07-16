@@ -3,6 +3,7 @@
   "dest": "../../dist/storage",
   "whitelistedNonPeerDependencies": [
     "@ionic/storage",
+    "is-iso-date",
     "traverse"
   ],
   "lib": {
@@ -11,6 +12,7 @@
       "@ionic/storage": "@ionic/storage",
       "@ngrx/effects": "@ngrx/effects",
       "@ngrx/store": "@ngrx/store",
+      "is-iso-date": "is-iso-date",
       "traverse": "traverse"
     }
   }

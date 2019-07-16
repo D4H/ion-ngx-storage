@@ -1,10 +1,7 @@
-// tslint:disable no-shadowed-variable
-
-import { InjectionToken } from '@angular/core';
-
 import {
   Action,
-  ActionReducerMap,
+  ActionReducer,
+  MemoizedSelector,
   createFeatureSelector,
   createReducer,
   createSelector,
@@ -14,7 +11,7 @@ import {
 import { HydrationSuccess } from './storage.actions';
 
 /**
- * Storage State
+ * Storage State and Reducer
  * ===========================================================================
  */
 
@@ -22,27 +19,15 @@ export interface StorageState {
   hydrated: boolean;
 }
 
-export interface State {
-  storage: StorageState;
-}
-
-/**
- * Storage Reducer
- * ===========================================================================
- * Wrapped in a provider object per bug in NgRX while registering a single
- * reducer with StoreModule.forFeature.
- *
- * @see https://github.com/ngrx/platform/issues/1915
- * @see https://ngrx.io/guide/store/recipes/injecting#injecting-reducers
- */
-
 export const initialState: StorageState = {
   hydrated: false
 };
 
-export const reducer = createReducer(
+export const storageReducer: ActionReducer<StorageState> = createReducer(
   initialState,
-  on(HydrationSuccess, (state: StorageState) => ({ hydrated: true }))
+  on(HydrationSuccess, (state: StorageState): StorageState => ({
+    hydrated: true
+  }))
 );
 
 /**
@@ -50,11 +35,13 @@ export const reducer = createReducer(
  * ===========================================================================
  */
 
-export const selectStorageState = createFeatureSelector<State, StorageState>(
-  'storage'
-);
+export const selectStorageState: MemoizedSelector<any, StorageState>
+  = createFeatureSelector<StorageState>(
+    'storage'
+  );
 
-export const selectHydrationStatus = createSelector(
-  selectStorageState,
-  (state: StorageState): boolean => state.hydrated
-);
+export const selectHydrationStatus: MemoizedSelector<StorageState, boolean>
+  = createSelector(
+    selectStorageState,
+    (state: StorageState): boolean => state.hydrated
+  );

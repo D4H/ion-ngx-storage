@@ -1,90 +1,43 @@
-import { EffectsModule } from '@ngrx/effects';
-import { InjectionToken, ModuleWithProviders, NgModule } from '@angular/core';
-import { META_REDUCERS, StoreModule } from '@ngrx/store';
-import { Storage, StorageConfig, StorageConfigToken } from '@ionic/storage';
+import { InjectionToken } from '@angular/core';
+import { META_REDUCERS } from '@ngrx/store';
+import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
+import { Storage, StorageConfig } from '@ionic/storage';
 
 import {
   MODULE_CONFIG,
   StorageModuleConfig,
-  StoreConfig,
   defaultConfig,
   provideStorage
 } from './providers';
 
-import {
-  State,
-  initialState,
-  StorageEffects,
-  provideMetaReducer,
-  reducer
-} from './store';
-
-/**
- * NgRx Feature Config Provider
- * =============================================================================
- */
-
-export const NGRX_FEATURE_CONFIG = new InjectionToken<StoreConfig<State>>(
-  'ION_NGX_NGRX_FEATURE_CONFIG'
-);
-
-export function provideNgrxConfig(
-  config: StorageModuleConfig,
-  storage: Storage
-): any {
-  console.log('[provideStoreConfig] function fired.');
-
-  return {
-    initialState,
-
-    reducerFactory() {
-      console.log('[reducerFactory] function fired.');
-
-      return {
-        storage: reducer
-      };
-    },
-
-    metaReducers: [
-      provideMetaReducer(config, storage)
-    ]
-  };
-}
+import { provideMetaReducer } from './store';
 
 /**
  * Storage Module Declaration
  * =============================================================================
- * TODO: Rename StorageModule. Its name confuses me...
+ * TODO: Rename StorageModule. This name confuses me...
  */
 
-@NgModule({
-  imports: [
-    EffectsModule.forRoot([]),
-    StoreModule.forRoot({}),
-    StoreModule.forFeature('storage', NGRX_FEATURE_CONFIG),
-    EffectsModule.forFeature([StorageEffects])
-  ]
-})
+@NgModule({})
 export class StorageModule {
-  static forFeature(moduleConfig?: StorageModuleConfig): ModuleWithProviders {
-    console.log('[StorageModule] Module initialized.');
-
+  static forRoot(config: StorageModuleConfig = defaultConfig): ModuleWithProviders {
     return {
       ngModule: StorageModule,
       providers: [
         {
           provide: MODULE_CONFIG,
-          useValue: moduleConfig
+          useValue: { ...defaultConfig, ...config }
         },
         {
-          deps: [MODULE_CONFIG],
           provide: Storage,
-          useFactory: provideStorage
+          useFactory: provideStorage,
+          deps: [MODULE_CONFIG]
         },
         {
+          provide: META_REDUCERS,
+          useFactory: provideMetaReducer,
           deps: [MODULE_CONFIG, Storage],
-          provide: NGRX_FEATURE_CONFIG,
-          useFactory: provideNgrxConfig
+          multi: true
         }
       ]
     };

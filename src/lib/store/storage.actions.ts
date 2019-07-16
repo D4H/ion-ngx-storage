@@ -1,4 +1,4 @@
-import { createAction, props } from '@ngrx/store';
+import { Action, createAction, props } from '@ngrx/store';
 
 export enum ActionTypes {
   HYDRATION_ERROR = 'STORAGE_HYDRATION_ERROR',
