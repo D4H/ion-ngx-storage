@@ -4,7 +4,7 @@
  * Returns object as-is when no keys are supplied.
  */
 
-export function pickState<T extends object>(
+export function pickFeatures<T extends object>(
   state: T,
   keys: Array<string> = []
 ): Partial<T> {

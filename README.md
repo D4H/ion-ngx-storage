@@ -14,8 +14,7 @@ In NgRx store, all eagerly-loaded feature states are visible from the perspectiv
 `IonNgxConfig` accepts these configuration options:
 
 * `name: string`: The name of your application. Used internally as an Ionic Storage table key. All data is stored _per application_ as a single object.
-* `states?: Array<string>`: Optional array of store states to store to the device instead of the entire application state.
-* `reducer: string`: Name of the reducer in the implementing application. This is necessary for ion-ngx-storage to determine whether hydration has completed successfully.
+* `features?: Array<string>`: Optional array of features to store to the device instead of the entire application state.
 * `ionicStorage: StorageConfig`: [Ionic Storage](https://ionicframework.com/docs/building/storage#configuring-storage) configuration.
 
 ## Use

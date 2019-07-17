@@ -24,8 +24,9 @@ import {
   WriteSuccess
 } from './storage.actions';
 
-import { STORAGE_REDUCER } from './storage.reducer';
 import { MODULE_CONFIG, IonNgxConfig } from '../providers';
+import { STORAGE_REDUCER } from './storage.reducer';
+import { pickFeatures } from '../tools';
 
 @Injectable()
 export class StorageEffects implements OnInitEffects {
@@ -83,7 +84,8 @@ export class StorageEffects implements OnInitEffects {
       !Object.values(ActionTypes).includes(action.type)
       && state[STORAGE_REDUCER] && state[STORAGE_REDUCER].hydrated
     )),
-    map(([action, state]) => Write({ payload: state }))
+    map(([action, state]) => pickFeatures(state, this.config.features)),
+    map(state => Write({ payload: state }))
   ));
 
   constructor(

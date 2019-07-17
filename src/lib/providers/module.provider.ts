@@ -13,15 +13,15 @@ export interface IonNgxStateTransform {
 }
 
 export interface IonNgxConfig<T extends object = {}> {
+  features?: Array<string>;
   name: string;
-  states?: Array<string>;
   storage?: StorageConfig;
   transform?: IonNgxStateTransform;
 }
 
 export const defaultConfig: IonNgxConfig = {
+  features: [],
   name: 'ION_NGX_STORAGE',
-  states: [],
 
   storage: {
     name: 'ion_ngx_storage'

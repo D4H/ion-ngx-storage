@@ -1,9 +1,9 @@
 import faker from 'faker';
 import { fromPairs, sampleSize, times } from 'lodash';
 
-import { pickState } from '../../lib/tools';
+import { pickFeatures } from '../../lib/tools';
 
-describe('pickState', () => {
+describe('pickFeatures', () => {
   let keys: Array<string>;
   let state: object;
 
@@ -19,8 +19,8 @@ describe('pickState', () => {
   });
 
   it('should be a function', () => {
-    expect(typeof pickState).toBe('function');
-    expect(pickState.length).toBe(1);
+    expect(typeof pickFeatures).toBe('function');
+    expect(pickFeatures.length).toBe(1);
   });
 
   it('should return an object comprising only picked keys', () => {
@@ -29,11 +29,11 @@ describe('pickState', () => {
       {}
     );
 
-    expect(pickState(state, keys)).toEqual(result);
+    expect(pickFeatures(state, keys)).toEqual(result);
   });
 
   it('should return the original object when given no keys', () => {
-    expect(pickState(state)).toEqual(state);
-    expect(pickState(state, [])).toEqual(state);
+    expect(pickFeatures(state)).toEqual(state);
+    expect(pickFeatures(state, [])).toEqual(state);
   });
 });
