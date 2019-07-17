@@ -2,9 +2,7 @@
 ![npm](https://img.shields.io/npm/v/@d4h/ion-ngx-storage.svg)
 
 # ion-ngx-storage
-ion-ngx-storage is a module for Ionic 4/Angular applications which synchronizes an application's [NgRx](https://ngrx.io/) root state to the native device or browser through [Ionic/Storage](https://ionicframework.com/docs/building/storage).
-
-In NgRx store, all eagerly-loaded feature states are visible from the perspective of the root application state. During application initialization ion-ngx-storage reads the last-written state from the device and merges it into the root state using a [meta-reducer](https://ngrx.io/guide/store/metareducers). Thereafter it writes the state to the device whenever an action is dispatched.
+ion-ngx-storage is a module for Ionic 4/Angular applications which copies an application's [NgRx](https://ngrx.io/) root state to the native device or browser through [Ionic/Storage](https://ionicframework.com/docs/building/storage).
 
 ## Installation
 
@@ -25,7 +23,7 @@ import { IonNgxConfig, IonNgxModule } from '@d4h/ion-ngx-storage';
 
 const storageConfig: IonNgxConfig = {
   name: 'my_application_name',
-  states: ['foo']
+  features: ['foo']
 };
 
 @NgModule({

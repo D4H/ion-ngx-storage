@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage';
 
 import {
   catchError,
+  concatMap,
   filter,
   map,
   switchMap,
@@ -32,7 +33,7 @@ import { pickFeatures } from '../tools';
 export class StorageEffects implements OnInitEffects {
   read: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(Read),
-    switchMap((action) => from(this.storage.get(action.payload)).pipe(
+    switchMap(action => from(this.storage.get(action.payload)).pipe(
       map((val: any) => this.config.transform.read(val)),
       map((val: any) => ReadSuccess({ payload: val })),
       catchError(error => of(ReadError(error)))
@@ -47,8 +48,8 @@ export class StorageEffects implements OnInitEffects {
 
   write$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(Write),
-    map((action: any) => this.config.transform.write(action.payload)),
-    switchMap((payload) => from(this.storage.set(this.config.name, payload)).pipe(
+    map(action => this.config.transform.write(action.payload)),
+    switchMap(payload => from(this.storage.set(this.config.name, payload)).pipe(
       map((val: any) => WriteSuccess(val))
     ))
   ));
@@ -79,12 +80,11 @@ export class StorageEffects implements OnInitEffects {
    */
 
   synchchronize$: Observable<Action> = createEffect(() => this.actions$.pipe(
-    withLatestFrom(this.store$),
-    filter(([action, state]: [Action, Store<any>]) => (
-      !Object.values(ActionTypes).includes(action.type)
-      && state[STORAGE_REDUCER] && state[STORAGE_REDUCER].hydrated
-    )),
-    map(([action, state]) => pickFeatures(state, this.config.features)),
+    filter(action => !Object.values(ActionTypes).includes(action.type)),
+    concatMap(action => of(action).pipe(withLatestFrom(this.store$))),
+    map(([, state]) => state),
+    filter(state => state[STORAGE_REDUCER] && state[STORAGE_REDUCER].hydrated),
+    map(state => pickFeatures(state, this.config.features)),
     map(state => Write({ payload: state }))
   ));
 

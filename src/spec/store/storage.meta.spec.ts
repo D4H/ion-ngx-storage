@@ -14,7 +14,7 @@ import {
 import {
   ActionTypes,
   STORAGE_META_REDUCER,
-  provideMetaReducer
+  storageMetaReducer
 } from '../../lib/store';
 
 describe('Meta Reducer', () => {
@@ -23,7 +23,7 @@ describe('Meta Reducer', () => {
       const comparisonProvider = {
         provide: META_REDUCERS,
         deps: [MODULE_CONFIG, Storage],
-        useFactory: provideMetaReducer,
+        useFactory: () => storageMetaReducer,
         multi: true
       };
 
@@ -45,13 +45,9 @@ describe('Meta Reducer', () => {
       config = defaultConfig;
       action = { type: faker.random.uuid(), state: {} };
       storage = new Storage(config.storage);
-      metaReducer = provideMetaReducer(config, storage)(reducer);
+      metaReducer = storageMetaReducer(reducer);
 
       state = {
-        [config.reducer]: {
-          hydrated: false
-        },
-
         [faker.random.uuid()]: {
           [faker.random.uuid()]: faker.random.uuid()
         }
@@ -63,19 +59,16 @@ describe('Meta Reducer', () => {
     });
 
     it('should be a factory function returning appropriate functions', () => {
-      expect(typeof provideMetaReducer).toBe('function');
-      expect(provideMetaReducer.length).toBe(2);
+      expect(typeof storageMetaReducer).toBe('function');
+      expect(storageMetaReducer.length).toBe(1);
 
-      expect(typeof provideMetaReducer(config, storage)).toBe('function');
-      expect(provideMetaReducer(config, storage).length).toBe(1);
-
-      metaReducer = provideMetaReducer(config, storage)(reducer);
+      metaReducer = storageMetaReducer(reducer);
       expect(typeof metaReducer).toBe('function');
       expect(metaReducer.length).toBe(2);
     });
 
-    it('should write to storage', (done) => {
-      storage.set(config.name, { goth: 'huggles' }).then((res) => {
+    it('should write to storage', done => {
+      storage.set(config.name, { goth: 'huggles' }).then(res => {
         expect('blah').toEqual('blah');
         expect(res).toEqual({ goth: 'huggles' });
 
@@ -88,7 +81,7 @@ describe('Meta Reducer', () => {
     });
 
     // FIXME: Test doesn't work. Need to spy and wait for async to finish. How?
-    xit('should not write to storage when hydration: false', (done) => {
+    xit('should not write to storage when hydration: false', done => {
       metaReducer(state, action);
 
       storage.keys().then(keys => {
