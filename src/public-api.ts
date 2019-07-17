@@ -15,10 +15,14 @@ export {
   StorageEffects,
   StorageState,
   initialState,
-  provideMetaReducer,
   selectHydrationStatus,
   selectStorageState,
-  storageReducer
+  storageReducer,
+  // Temp
+  Clear,
+  Read,
+  ReadError,
+  ReadSuccess,
 } from './lib/store';
 
 export {

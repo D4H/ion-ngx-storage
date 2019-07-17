@@ -1,21 +1,45 @@
-import { Action, createAction, props } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 
 export enum ActionTypes {
-  RESET = 'STORAGE_RESET',
-  HYDRATION_ERROR = 'STORAGE_HYDRATION_ERROR',
-  HYDRATION_SUCCESS = 'STORAGE_HYDRATION_SUCCESS'
+  CLEAR = '[ion-ngx-storage] Clear Storage',
+  READ = '[ion-ngx-storage] Storage Read',
+  READ_ERROR = '[ion-ngx-storage] Storage Read Error',
+  READ_SUCCESS = '[ion-ngx-storage] Storage Read Success',
+  WRITE = '[ion-ngx-storage] Storage Write',
+  WRITE_ERROR = '[ion-ngx-storage] Storage Write Error',
+  WRITE_SUCCESS = '[ion-ngx-storage] Storage Write Success'
 }
 
-export const StorageHydrationError = createAction(
-  ActionTypes.HYDRATION_ERROR,
-  props<{ error: object }>()
+export const Clear = createAction(
+  ActionTypes.CLEAR
 );
 
-export const StorageHydrationSuccess = createAction(
-  ActionTypes.HYDRATION_SUCCESS,
-  props<{ state: object }>()
+export const Read = createAction(
+  ActionTypes.READ,
+  props<{ payload: string }>()
 );
 
-export const StorageReset = createAction(
-  ActionTypes.RESET
+export const ReadError = createAction(
+  ActionTypes.READ_ERROR,
+  props<{ error: any }>()
+);
+
+export const ReadSuccess = createAction(
+  ActionTypes.READ_SUCCESS,
+  props<{ payload: any }>()
+);
+
+export const Write = createAction(
+  ActionTypes.WRITE,
+  props<{ payload: any }>()
+);
+
+export const WriteError = createAction(
+  ActionTypes.WRITE_ERROR,
+  props<{ error: any }>()
+);
+
+export const WriteSuccess = createAction(
+  ActionTypes.WRITE_SUCCESS,
+  props<{ payload: any }>()
 );

@@ -1,6 +1,7 @@
 import {
   Action,
   ActionReducer,
+  ActionReducerMap,
   MemoizedSelector,
   createFeatureSelector,
   createReducer,
@@ -8,7 +9,8 @@ import {
   on
 } from '@ngrx/store';
 
-import { StorageHydrationSuccess } from './storage.actions';
+import { InjectionToken } from '@angular/core';
+import { ReadSuccess } from './storage.actions';
 
 /**
  * Storage State and Reducer
@@ -25,7 +27,7 @@ export const initialState: StorageState = {
 
 export const storageReducer: ActionReducer<StorageState> = createReducer(
   initialState,
-  on(StorageHydrationSuccess, (state: StorageState): StorageState => ({
+  on(ReadSuccess, (state: StorageState): StorageState => ({
     hydrated: true
   }))
 );

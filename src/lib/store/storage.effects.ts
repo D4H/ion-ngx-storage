@@ -1,65 +1,98 @@
-import { Action } from '@ngrx/store';
-import { Actions, ROOT_EFFECTS_INIT, createEffect, ofType } from '@ngrx/effects';
+import { Action, Store } from '@ngrx/store';
+import { Actions, OnInitEffects, createEffect, ofType } from '@ngrx/effects';
 import { Inject, Injectable, Injector } from '@angular/core';
 import { Observable, from, of } from 'rxjs';
 import { Storage } from '@ionic/storage';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import {
-  StorageHydrationError,
-  StorageHydrationSuccess,
-  StorageReset
+  catchError,
+  filter,
+  map,
+  switchMap,
+  tap,
+  withLatestFrom
+} from 'rxjs/operators';
+
+import {
+  ActionTypes,
+  Clear,
+  Read,
+  ReadError,
+  ReadSuccess,
+  Write,
+  WriteError,
+  WriteSuccess
 } from './storage.actions';
 
 import { MODULE_CONFIG, IonNgxModuleConfig } from '../providers';
 
 @Injectable()
-export class StorageEffects {
+export class StorageEffects implements OnInitEffects {
+  read: Observable<Action> = createEffect(() => this.actions$.pipe(
+    ofType(Read),
+    switchMap((action) => from(this.storage.get(action.payload)).pipe(
+      map((val: any) => this.config.transform.read(val)),
+      map((val: any) => ReadSuccess({ payload: val })),
+      catchError(error => of(ReadError(error)))
+    ))
+  ));
+
+  readError$: Observable<Action> = createEffect(() => this.actions$.pipe(
+    ofType(ReadError),
+    tap(console.error),
+    map(() => ReadSuccess({ payload: {} }))
+  ));
+
+  write$: Observable<Action> = createEffect(() => this.actions$.pipe(
+    ofType(Write),
+    map((action: any) => this.config.transform.write(action.payload)),
+    switchMap((payload) => from(this.storage.set(this.config.name, payload)).pipe(
+      map((val: any) => WriteSuccess(val))
+    ))
+  ));
+
+  writeError$: Observable<Action> = createEffect(() => this.actions$.pipe(
+    ofType(WriteError),
+    tap(console.error),
+    map(() => WriteSuccess)
+  ));
+
+  clear$: Observable<Action> = createEffect(() => this.actions$.pipe(
+    ofType(Clear),
+    switchMap(() => from(this.storage.clear()).pipe(
+      map(() => ReadSuccess({ payload: {} }))
+    ))
+  ));
+
+  /**
+   * Copy Store to Storage
+   * ===========================================================================
+   * Copy the application state to storage when the following conditions are
+   * met:
+   *
+   *  1. The action's type is not one from ion-ngx-storage. This is to prevent
+   *  infinite circular writes which could break the application.
+   *  2. The initial read of the state completed. Otherwise the initial
+   *  application state will overwrite that stored.
+   */
+
+  synchchronize$: Observable<Action> = createEffect(() => this.actions$.pipe(
+    withLatestFrom(this.store$),
+    filter(([action, state]: [Action, Store<any>]) => (
+      !Object.values(ActionTypes).includes(action.type)
+      && state[this.config.reducer] && state[this.config.reducer].hydrated
+    )),
+    map(([action, state]) => Write({ payload: state }))
+  ));
+
   constructor(
     @Inject(MODULE_CONFIG) private readonly config: IonNgxModuleConfig,
     private readonly actions$: Actions,
-    private readonly storage: Storage
+    private readonly storage: Storage,
+    private readonly store$: Store<any>
   ) {}
 
-  /**
-   * Rehydrate Storage on Store Initialization
-   * ===========================================================================
-   * Hydration cannot occur before effects are initialized. There's nowhere to
-   * dispatch the action before this.
-   */
-
-  init$: Observable<Action> = createEffect(() => this.actions$.pipe(
-    ofType(ROOT_EFFECTS_INIT),
-    switchMap(() => from(this.storage.get(this.config.name)).pipe(
-      map((state: object) => StorageHydrationSuccess({ state })),
-      catchError(error => of(StorageHydrationError(error)))
-    ))
-  ));
-
-  /**
-   * Storage Hydration Error
-   * ===========================================================================
-   * Hydration errors have no impact on state other than effective deletion of
-   * dehydrated data. Catch and log error but continue execution, because
-   * otherwise guards which depend on this will wait for hydration to complete.
-   */
-
-  error$: Observable<Action> = createEffect(() => this.actions$.pipe(
-    ofType(StorageHydrationError),
-    tap(console.error),
-    map(() => StorageHydrationSuccess({ state: {} }))
-  ));
-
-  /**
-   * Reset Storage
-   * ===========================================================================
-   * Useful for testing!
-   */
-
-  reset$: Observable<Action> = createEffect(() => this.actions$.pipe(
-    ofType(StorageReset),
-    switchMap(() => from(this.storage.clear()).pipe(
-      map(() => StorageHydrationSuccess({ state: {} }))
-    ))
-  ));
+  ngrxOnInitEffects(): Action {
+    return Read({ payload: this.config.name });
+  }
 }

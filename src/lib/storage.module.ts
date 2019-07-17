@@ -1,5 +1,5 @@
-import { InjectionToken } from '@angular/core';
-import { META_REDUCERS } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { META_REDUCERS, StoreModule } from '@ngrx/store';
 import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 import { Storage, StorageConfig } from '@ionic/storage';
 
@@ -10,7 +10,11 @@ import {
   provideStorage
 } from './providers';
 
-import { provideMetaReducer } from './store';
+import {
+  STORAGE_META_REDUCER,
+  StorageEffects,
+  storageMetaReducer
+} from './store';
 
 /**
  * IonNgxModule Declaration
@@ -23,6 +27,7 @@ export class IonNgxModule {
     return {
       ngModule: IonNgxModule,
       providers: [
+        STORAGE_META_REDUCER,
         {
           provide: MODULE_CONFIG,
           useValue: { ...defaultConfig, ...config }
@@ -31,12 +36,6 @@ export class IonNgxModule {
           provide: Storage,
           useFactory: provideStorage,
           deps: [MODULE_CONFIG]
-        },
-        {
-          provide: META_REDUCERS,
-          useFactory: provideMetaReducer,
-          deps: [MODULE_CONFIG, Storage],
-          multi: true
         }
       ]
     };
