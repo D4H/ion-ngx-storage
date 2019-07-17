@@ -4,7 +4,7 @@ import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
 import { Storage, StorageConfig } from '@ionic/storage';
 
 import {
-  IonNgxModuleConfig,
+  IonNgxConfig,
   MODULE_CONFIG,
   defaultConfig,
   provideStorage
@@ -12,8 +12,10 @@ import {
 
 import {
   STORAGE_META_REDUCER,
+  STORAGE_REDUCER,
   StorageEffects,
-  storageMetaReducer
+  storageMetaReducer,
+  storageReducer
 } from './store';
 
 /**
@@ -21,9 +23,14 @@ import {
  * =============================================================================
  */
 
-@NgModule({})
+@NgModule({
+  imports: [
+    StoreModule.forFeature(STORAGE_REDUCER, storageReducer),
+    EffectsModule.forFeature([StorageEffects])
+  ]
+})
 export class IonNgxModule {
-  static forRoot(config: IonNgxModuleConfig = defaultConfig): ModuleWithProviders {
+  static forRoot(config: IonNgxConfig = defaultConfig): ModuleWithProviders {
     return {
       ngModule: IonNgxModule,
       providers: [

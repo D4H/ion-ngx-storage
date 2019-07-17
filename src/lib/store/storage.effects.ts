@@ -24,7 +24,8 @@ import {
   WriteSuccess
 } from './storage.actions';
 
-import { MODULE_CONFIG, IonNgxModuleConfig } from '../providers';
+import { STORAGE_REDUCER } from './storage.reducer';
+import { MODULE_CONFIG, IonNgxConfig } from '../providers';
 
 @Injectable()
 export class StorageEffects implements OnInitEffects {
@@ -80,13 +81,13 @@ export class StorageEffects implements OnInitEffects {
     withLatestFrom(this.store$),
     filter(([action, state]: [Action, Store<any>]) => (
       !Object.values(ActionTypes).includes(action.type)
-      && state[this.config.reducer] && state[this.config.reducer].hydrated
+      && state[STORAGE_REDUCER] && state[STORAGE_REDUCER].hydrated
     )),
     map(([action, state]) => Write({ payload: state }))
   ));
 
   constructor(
-    @Inject(MODULE_CONFIG) private readonly config: IonNgxModuleConfig,
+    @Inject(MODULE_CONFIG) private readonly config: IonNgxConfig,
     private readonly actions$: Actions,
     private readonly storage: Storage,
     private readonly store$: Store<any>

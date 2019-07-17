@@ -25,12 +25,18 @@ export const initialState: StorageState = {
   hydrated: false
 };
 
-export const storageReducer: ActionReducer<StorageState> = createReducer(
+export const reducer: ActionReducer<StorageState> = createReducer(
   initialState,
   on(ReadSuccess, (state: StorageState): StorageState => ({
     hydrated: true
   }))
 );
+
+export function storageReducer(state: StorageState, action: Action): StorageState {
+  return reducer(state, action);
+}
+
+export const STORAGE_REDUCER = 'ion_ngx_storage';
 
 /**
  * Storage Selectors
@@ -39,7 +45,7 @@ export const storageReducer: ActionReducer<StorageState> = createReducer(
 
 export const selectStorageState: MemoizedSelector<any, StorageState>
   = createFeatureSelector<StorageState>(
-    'storage'
+    STORAGE_REDUCER
   );
 
 export const selectHydrationStatus: MemoizedSelector<StorageState, boolean>

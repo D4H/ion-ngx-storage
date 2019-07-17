@@ -11,7 +11,7 @@ In NgRx store, all eagerly-loaded feature states are visible from the perspectiv
 `npm install --save @d4h/ion-ngx-storage`
 
 ## Configuration
-`IonNgxModuleConfig` accepts these configuration options:
+`IonNgxConfig` accepts these configuration options:
 
 * `name: string`: The name of your application. Used internally as an Ionic Storage table key. All data is stored _per application_ as a single object.
 * `states?: Array<string>`: Optional array of store states to store to the device instead of the entire application state.
@@ -22,40 +22,10 @@ In NgRx store, all eagerly-loaded feature states are visible from the perspectiv
 ion-ngx-storage **must** be added to the root state. `IonNgxModule` injects its meta reducer through the [`META_REDUCERS`](https://next.ngrx.io/guide/store/recipes/injecting#injecting-meta-reducers) provider.
 
 ```typescript
-import {
-  IonNgxModule,
-  StorageEffects,
-  StorageState,
-  storageReducer
-} from '@d4h/ion-ngx-storage';
+import { IonNgxConfig, IonNgxModule } from '@d4h/ion-ngx-storage';
 
-// 1. Add StorageState to AppState
-export interface AppState {
-  foo: FooState;
-  bar: BarState;
-  storage: StorageState;
-}
-
-// 2. Add storageReducer to application reducers.
-export const reducers: ActionReducerMap<AppState> = {
-  foo: fooReducer,
-  bar: barReducer,
-  storage: storageReducer
-};
-
-export const metaReducers: Array<MetaReducer<AppState>> = [
-  logger
-];
-
-// 3. Add StorageEffects to root effects.
-const effects: Array<any> = [
-  StorageEffects
-];
-
-// 4. Declare StorageConfig. In this case, ion-ngx-storage will only save FooState.
-const storageConfig = {
+const storageConfig: IonNgxConfig = {
   name: 'my_application_name',
-  reducer: 'storage',
   states: ['foo']
 };
 

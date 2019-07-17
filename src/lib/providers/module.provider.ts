@@ -12,17 +12,15 @@ export interface IonNgxStateTransform {
   write<T>(state: T): T;
 }
 
-export interface IonNgxModuleConfig<T extends object = {}> {
+export interface IonNgxConfig<T extends object = {}> {
   name: string;
-  reducer: string;
   states?: Array<string>;
   storage?: StorageConfig;
   transform?: IonNgxStateTransform;
 }
 
-export const defaultConfig: IonNgxModuleConfig = {
+export const defaultConfig: IonNgxConfig = {
   name: 'ION_NGX_STORAGE',
-  reducer: 'storage',
   states: [],
 
   storage: {
@@ -47,7 +45,7 @@ export const MODULE_CONFIG = new InjectionToken<StorageConfig>(
  */
 
 export function provideStorage(
-  config: Partial<IonNgxModuleConfig> = defaultConfig
+  config: Partial<IonNgxConfig> = defaultConfig
 ): Storage {
   return new Storage(config.storage);
 }

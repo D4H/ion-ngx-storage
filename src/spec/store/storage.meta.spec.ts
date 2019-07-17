@@ -6,7 +6,7 @@ import { Storage } from '@ionic/storage';
 import { fromPairs, sampleSize, times } from 'lodash';
 
 import {
-  IonNgxModuleConfig,
+  IonNgxConfig,
   MODULE_CONFIG,
   defaultConfig
 } from '../../lib/providers';
@@ -14,8 +14,6 @@ import {
 import {
   ActionTypes,
   STORAGE_META_REDUCER,
-  mergeReadState,
-  pickState,
   provideMetaReducer
 } from '../../lib/store';
 
@@ -34,80 +32,11 @@ describe('Meta Reducer', () => {
     });
   });
 
-  describe('mergeReadState', () => {
-    let actions: Array<{ type: string, state: object }>;
-    let payload: object;
-    let state: object;
-
-    beforeEach(() => {
-      state = fromPairs(
-        times(7, () => [faker.random.uuid(), faker.random.uuid()])
-      );
-
-      payload = fromPairs(
-        times(9, () => [faker.random.uuid(), faker.random.uuid()])
-      );
-
-      actions = times(9, () => ({ type: faker.random.uuid(), state: payload }));
-    });
-
-    it('should be a function', () => {
-      expect(typeof mergeReadState).toBe('function');
-      expect(mergeReadState.length).toBe(2);
-    });
-
-    it('should not merge payload when given incorrect actions', () => {
-      actions.forEach(action => {
-        expect(mergeReadState(state, action)).toEqual(state);
-      });
-    });
-
-    it('should merge payload when given the correct action', () => {
-      const action = { type: ActionTypes.HYDRATION_SUCCESS, state: payload };
-      expect(mergeReadState(state, action)).toEqual({ ...state, ...payload });
-    });
-  });
-
-  describe('pickState', () => {
-    let keys: Array<string>;
-    let state: object;
-
-    beforeEach(() => {
-      state = fromPairs(
-        times(15, () => [faker.random.uuid(), faker.random.uuid()])
-      );
-
-      keys = sampleSize(
-        Object.keys(state),
-        faker.random.number({ min: 0, max: 20 })
-      );
-    });
-
-    it('should be a function', () => {
-      expect(typeof pickState).toBe('function');
-      expect(pickState.length).toBe(1);
-    });
-
-    it('should return an object comprising only picked keys', () => {
-      const result = keys.reduce(
-        (acc, key) => ({ ...acc, [key]: state[key] }),
-        {}
-      );
-
-      expect(pickState(state, keys)).toEqual(result);
-    });
-
-    it('should return the original object when given no keys', () => {
-      expect(pickState(state)).toEqual(state);
-      expect(pickState(state, [])).toEqual(state);
-    });
-  });
-
   describe('provideMetaReducer', () => {
     const reducer = (state, action) => state; // NOOP for sake of tests.
 
     let action: { type: string, state: object };
-    let config: IonNgxModuleConfig;
+    let config: IonNgxConfig;
     let metaReducer: (state: object, action: Action) => object;
     let state: object;
     let storage: Storage;

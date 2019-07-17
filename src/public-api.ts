@@ -7,22 +7,13 @@ export {
 } from './lib/storage.module';
 
 export {
-  IonNgxModuleConfig,
+  IonNgxConfig,
   defaultConfig
 } from './lib/providers';
 
 export {
-  StorageEffects,
-  StorageState,
-  initialState,
   selectHydrationStatus,
-  selectStorageState,
-  storageReducer,
-  // Temp
-  Clear,
-  Read,
-  ReadError,
-  ReadSuccess,
+  selectStorageState
 } from './lib/store';
 
 export {
