@@ -1,6 +1,6 @@
 {
   "name": "@d4h/ion-ngx-storage",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "description": "Synchronize Ionic application NgRx store to native device storage.",
   "homepage": "https://github.com/D4H/ion-ngx-storage",
@@ -9,6 +9,15 @@
     "email": "mark.grealish@d4h.org",
     "url": "https://github.com/orgs/D4H/people"
   },
+  "keywords": [
+    "angular",
+    "dehydration",
+    "hydration",
+    "ionic",
+    "ngrx",
+    "storage",
+    "sychronization"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/D4H/ion-ngx-storage"
