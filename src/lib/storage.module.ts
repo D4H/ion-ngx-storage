@@ -1,4 +1,5 @@
 import { EffectsModule } from '@ngrx/effects';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { StoreModule } from '@ngrx/store';
@@ -14,8 +15,9 @@ import {
   STORAGE_META_REDUCER,
   STORAGE_REDUCER,
   StorageEffects,
-  storageMetaReducer,
-  reducer
+  initialState,
+  reducer,
+  storageMetaReducer
 } from './store';
 
 /**

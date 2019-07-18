@@ -3,9 +3,8 @@
  */
 
 export {
-  ModuleConfig as IonNgxConfig,
-  StateTransform as IonNgxStateTransform,
-  defaultConfig
+  ModuleConfig as StorageModuleConfig,
+  StateTransform as StorageStateTransform
 } from './lib/providers';
 
 export {
@@ -15,7 +14,7 @@ export {
 } from './lib/store';
 
 export {
-  StorageModule as IonNgxModule
+  StorageModule as StorageModule
 } from './lib/storage.module';
 
 export {
