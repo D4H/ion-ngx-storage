@@ -33,9 +33,9 @@ import { pickFeatures } from '../tools';
 export class StorageEffects implements OnInitEffects {
   read: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(Read),
-    switchMap(action => from(this.storage.get(action.payload)).pipe(
-      map((val: any) => this.config.transform.read(val)),
-      map((val: any) => ReadSuccess({ payload: val })),
+    switchMap(action => from(this.storage.get(action.key)).pipe(
+      map((value: any) => this.config.transform.read(value)),
+      map((value: any) => ReadSuccess({ value })),
       catchError(error => of(ReadError(error)))
     ))
   ));
@@ -43,13 +43,13 @@ export class StorageEffects implements OnInitEffects {
   readError$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(ReadError),
     tap(console.error),
-    map(() => ReadSuccess({ payload: {} }))
+    map(() => ReadSuccess({ value: undefined }))
   ));
 
   write$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(Write),
-    map(action => this.config.transform.write(action.payload)),
-    switchMap(payload => from(this.storage.set(this.config.name, payload)).pipe(
+    map(({ key, value }) => ({ key, value: this.config.transform.write(value) })),
+    switchMap(({ key, value }) => from(this.storage.set(key, value)).pipe(
       map((val: any) => WriteSuccess(val))
     ))
   ));
@@ -63,7 +63,7 @@ export class StorageEffects implements OnInitEffects {
   clear$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(Clear),
     switchMap(() => from(this.storage.clear()).pipe(
-      map(() => ReadSuccess({ payload: {} }))
+      map(() => ReadSuccess({ value: undefined }))
     ))
   ));
 
@@ -85,7 +85,7 @@ export class StorageEffects implements OnInitEffects {
     map(([, state]) => state),
     filter(state => state[STORAGE_REDUCER] && state[STORAGE_REDUCER].hydrated),
     map(state => pickFeatures(state, this.config.features)),
-    map(state => Write({ payload: state }))
+    map(state => Write({ key: this.config.name, value: state }))
   ));
 
   constructor(
@@ -96,6 +96,6 @@ export class StorageEffects implements OnInitEffects {
   ) {}
 
   ngrxOnInitEffects(): Action {
-    return Read({ payload: this.config.name });
+    return Read({ key: this.config.name });
   }
 }

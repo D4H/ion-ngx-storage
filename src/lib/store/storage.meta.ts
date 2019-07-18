@@ -13,11 +13,11 @@ import { ActionTypes, ReadSuccess } from './storage.actions';
 
 export function storageMetaReducer<T>(
   reducer: ActionReducer<T>
-): (state: T, action: Action & { payload: object; }) => T {
-  return (state: T, action: Action & { payload: object }): T => {
+): (state: T, action: Action & { value: object; }) => T {
+  return (state: T, action: Action & { value: object }): T => {
     if (action.type === ActionTypes.READ_SUCCESS) {
       return reducer(
-        { ...state, ...action.payload },
+        { ...state, ...action.value },
         action
       );
     } else {

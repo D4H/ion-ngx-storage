@@ -16,7 +16,7 @@ export const Clear = createAction(
 
 export const Read = createAction(
   ActionTypes.READ,
-  props<{ payload: string }>()
+  props<{ key: string }>()
 );
 
 export const ReadError = createAction(
@@ -26,12 +26,12 @@ export const ReadError = createAction(
 
 export const ReadSuccess = createAction(
   ActionTypes.READ_SUCCESS,
-  props<{ payload: any }>()
+  props<{ value: any }>()
 );
 
 export const Write = createAction(
   ActionTypes.WRITE,
-  props<{ payload: any }>()
+  props<{ key: string, value: any }>()
 );
 
 export const WriteError = createAction(
@@ -41,5 +41,5 @@ export const WriteError = createAction(
 
 export const WriteSuccess = createAction(
   ActionTypes.WRITE_SUCCESS,
-  props<{ payload: any }>()
+  props<{ value: any }>()
 );

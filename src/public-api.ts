@@ -12,7 +12,8 @@ export {
 } from './lib/providers';
 
 export {
-  selectHydrationStatus,
+  StorageFacade,
+  selectHydratedStatus,
   selectStorageState
 } from './lib/store';
 
