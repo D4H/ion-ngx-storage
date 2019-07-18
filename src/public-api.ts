@@ -3,11 +3,8 @@
  */
 
 export {
-  IonNgxModule
-} from './lib/storage.module';
-
-export {
-  IonNgxConfig,
+  ModuleConfig as IonNgxConfig,
+  StateTransform as IonNgxStateTransform,
   defaultConfig
 } from './lib/providers';
 
@@ -16,6 +13,10 @@ export {
   selectHydratedStatus,
   selectStorageState
 } from './lib/store';
+
+export {
+  StorageModule as IonNgxModule
+} from './lib/storage.module';
 
 export {
   dateTransform

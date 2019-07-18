@@ -1,7 +1,7 @@
 import isIsoDate from 'is-iso-date';
 import traverse from 'traverse';
 
-import { IonNgxStateTransform } from '../providers';
+import { StateTransform } from '../providers';
 
 /**
  * Transform State for Read/Write
@@ -30,7 +30,7 @@ export function write<T>(state: T): T {
   });
 }
 
-export const dateTransform: IonNgxStateTransform = {
+export const dateTransform: StateTransform = {
   write,
   read
 };

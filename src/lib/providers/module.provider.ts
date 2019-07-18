@@ -7,19 +7,19 @@ import { Storage, StorageConfig } from '@ionic/storage';
  * @see https://ionicframework.com/docs/building/storage
  */
 
-export interface IonNgxStateTransform {
+export interface StateTransform {
   read<T>(state: T): T;
   write<T>(state: T): T;
 }
 
-export interface IonNgxConfig<T extends object = {}> {
+export interface ModuleConfig<T extends object = {}> {
   features?: Array<string>;
   name: string;
   storage?: StorageConfig;
-  transform?: IonNgxStateTransform;
+  transform?: StateTransform;
 }
 
-export const defaultConfig: IonNgxConfig = {
+export const defaultConfig: ModuleConfig = {
   features: [],
   name: 'ION_NGX_STORAGE',
 
@@ -45,7 +45,7 @@ export const MODULE_CONFIG = new InjectionToken<StorageConfig>(
  */
 
 export function provideStorage(
-  config: Partial<IonNgxConfig> = defaultConfig
+  config: Partial<ModuleConfig> = defaultConfig
 ): Storage {
   return new Storage(config.storage);
 }

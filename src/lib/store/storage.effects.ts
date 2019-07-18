@@ -25,13 +25,20 @@ import {
   WriteSuccess
 } from './storage.actions';
 
-import { MODULE_CONFIG, IonNgxConfig } from '../providers';
+import { MODULE_CONFIG, ModuleConfig } from '../providers';
 import { STORAGE_REDUCER } from './storage.reducer';
 import { pickFeatures } from '../tools';
 
 @Injectable()
 export class StorageEffects implements OnInitEffects {
-  read: Observable<Action> = createEffect(() => this.actions$.pipe(
+  clear$: Observable<Action> = createEffect(() => this.actions$.pipe(
+    ofType(Clear),
+    switchMap(() => from(this.storage.clear()).pipe(
+      map(() => ReadSuccess({ value: undefined }))
+    ))
+  ));
+
+  read$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(Read),
     switchMap(action => from(this.storage.get(action.key)).pipe(
       map((value: any) => this.config.transform.read(value)),
@@ -50,21 +57,14 @@ export class StorageEffects implements OnInitEffects {
     ofType(Write),
     map(({ key, value }) => ({ key, value: this.config.transform.write(value) })),
     switchMap(({ key, value }) => from(this.storage.set(key, value)).pipe(
-      map((val: any) => WriteSuccess(val))
+      map((val: any) => WriteSuccess({ value: val }))
     ))
   ));
 
   writeError$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(WriteError),
     tap(console.error),
-    map(() => WriteSuccess)
-  ));
-
-  clear$: Observable<Action> = createEffect(() => this.actions$.pipe(
-    ofType(Clear),
-    switchMap(() => from(this.storage.clear()).pipe(
-      map(() => ReadSuccess({ value: undefined }))
-    ))
+    map(() => WriteSuccess({ value: undefined }))
   ));
 
   /**
@@ -89,7 +89,7 @@ export class StorageEffects implements OnInitEffects {
   ));
 
   constructor(
-    @Inject(MODULE_CONFIG) private readonly config: IonNgxConfig,
+    @Inject(MODULE_CONFIG) private readonly config: ModuleConfig,
     private readonly actions$: Actions,
     private readonly storage: Storage,
     private readonly store$: Store<any>
