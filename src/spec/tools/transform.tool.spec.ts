@@ -104,26 +104,61 @@ describe('Storage Meta Reducer', () => {
 
     it('should correctly determine the type of value', () => {
       const values = [
-        [, false],
-        [Infinity, false],
-        [NaN, false],
-        [[], false],
-        [faker.date.future(), true],
-        [faker.date.past(), true],
-        [faker.name.firstName(), false],
-        [faker.random.number(), false],
-        [false, false],
-        [moment(), true],
-        [moment(faker.date.future()), true],
-        [moment(faker.date.past()), true],
-        [new Date(), true],
-        [null, false],
-        [true, false],
-        [undefined, false],
-        [{}, false]
+        {
+          value: Infinity,
+          result: false
+        },
+        {
+          value: NaN,
+          result: false
+        },
+        {
+          value: [],
+          result: false
+        },
+        {
+          value: true,
+          result: false
+        },
+        {
+          value: false,
+          result: false
+        },
+        {
+          value: '',
+          result: false
+        },
+        {
+          value: 15,
+          result: false
+        },
+        {
+          value: moment(),
+          result: true
+        },
+        {
+          value: new Date(),
+          result: true
+        },
+        {
+          value: null,
+          result: false
+        },
+        {
+          value: true,
+          result: false
+        },
+        {
+          value: undefined,
+          result: false
+        },
+        {
+          value: {},
+          result: false
+        }
       ];
 
-      values.forEach(([value, result]: [any, boolean]) => {
+      values.forEach(({ value, result }) => {
         expect(isDateLike(value)).toBe(result);
       });
     });

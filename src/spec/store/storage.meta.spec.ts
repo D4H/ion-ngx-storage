@@ -2,14 +2,6 @@
 
 import faker from 'faker';
 import { Action, META_REDUCERS } from '@ngrx/store';
-import { Storage } from '@ionic/storage';
-import { fromPairs, sampleSize, times } from 'lodash';
-
-import {
-  IonNgxConfig,
-  MODULE_CONFIG,
-  defaultConfig
-} from '../../lib/providers';
 
 import {
   ActionTypes,
@@ -22,7 +14,6 @@ describe('Meta Reducer', () => {
     it('should equal the comparison provider', () => {
       const comparisonProvider = {
         provide: META_REDUCERS,
-        deps: [MODULE_CONFIG, Storage],
         useFactory: () => storageMetaReducer,
         multi: true
       };
@@ -32,20 +23,23 @@ describe('Meta Reducer', () => {
     });
   });
 
-  describe('provideMetaReducer', () => {
+  describe('storageMetaReducer', () => {
     const reducer = (state, action) => state; // NOOP for sake of tests.
+    const metaReducer = storageMetaReducer(reducer);
 
-    let action: { type: string, state: object };
-    let config: IonNgxConfig;
-    let metaReducer: (state: object, action: Action) => object;
+    let action: { type: string, value: object };
     let state: object;
-    let storage: Storage;
 
     beforeEach(() => {
-      config = defaultConfig;
-      action = { type: faker.random.uuid(), state: {} };
-      storage = new Storage(config.storage);
-      metaReducer = storageMetaReducer(reducer);
+      action = {
+        type: faker.random.uuid(),
+
+        value: {
+          [faker.random.uuid()]: {
+            [faker.random.uuid()]: faker.random.uuid()
+          }
+        }
+      };
 
       state = {
         [faker.random.uuid()]: {
@@ -54,40 +48,24 @@ describe('Meta Reducer', () => {
       };
     });
 
-    afterEach(() => {
-      storage.clear();
-    });
-
-    it('should be a factory function returning appropriate functions', () => {
+    it('should be a compliant meta-reducer', () => {
       expect(typeof storageMetaReducer).toBe('function');
       expect(storageMetaReducer.length).toBe(1);
 
-      metaReducer = storageMetaReducer(reducer);
       expect(typeof metaReducer).toBe('function');
       expect(metaReducer.length).toBe(2);
     });
 
-    it('should write to storage', done => {
-      storage.set(config.name, { goth: 'huggles' }).then(res => {
-        expect('blah').toEqual('blah');
-        expect(res).toEqual({ goth: 'huggles' });
-
-        storage.keys().then(keys => {
-          expect(keys.includes(config.name)).toBe(true);
-        });
-
-        done();
-      });
+    it('should not perform any changes with different actions', () => {
+      expect(metaReducer(state, action)).toEqual(state);
     });
 
-    // FIXME: Test doesn't work. Need to spy and wait for async to finish. How?
-    xit('should not write to storage when hydration: false', done => {
-      metaReducer(state, action);
+    it('should merge states when the action is READ_SUCCESS', () => {
+      action = { ...action, type: ActionTypes.READ_SUCCESS };
+      expect(metaReducer(state, action)).toEqual({ ...state, ...action.value });
 
-      storage.keys().then(keys => {
-        expect(keys.length).toBe(0);
-        done();
-      });
+      action = { type: ActionTypes.READ_SUCCESS, value: undefined };
+      expect(metaReducer(state, action)).toEqual({ ...state, ...action.value });
     });
   });
 });
