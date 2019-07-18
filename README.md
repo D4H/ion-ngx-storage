@@ -75,12 +75,13 @@ export class AppModule {}
 ```
 
 ### State Transformation
-ion-ngx-storage builds upon other software. It directly calls [Ionic/Storage](https://ionicframework.com/docs/building/storage), which in turn uses [localForage](https://github.com/localForage/localForage), and which ultimately calls [`Storage.setItem`](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem) for writes. localForage [serializes](https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js#L252-L274) data before it writes. Certain objects e.g. a Moment.js instance, will cause the operation to fail with an error. The `read` and `write` transformation functions work as expected: they accept the state object _before write_ and _after read_ and perform a transformation.
+ion-ngx-storage builds upon other software. It directly calls [Ionic/Storage](https://ionicframework.com/docs/building/storage), which in turn uses [localForage](https://github.com/localForage/localForage), and which ultimately calls [`Storage.setItem`](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem) for writes. localForage [serializes](https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js#L252-L274) data before it writes. Certain objects e.g. a Moment.js instance, cause operations to fail with an error.
 
-The below examples traverse the state and convert and Date or Moment instances into strings before being written, then back into Date objects after write.
+The `read` and `write` functions transform the entire NgrX state.
 
 ```typescript
-export function read<T>(state: T): T {
+// _After_ read from storage.
+function read<T>(state: T): T {
   return traverse(state).map(function(value: any): void {
     if (isIsoDate(value)) {
       this.update(new Date(value), true);
@@ -88,7 +89,8 @@ export function read<T>(state: T): T {
   });
 }
 
-export function write<T>(state: T): T {
+// _Before_ write to storage.
+function write<T>(state: T): T {
   return traverse(state).map(function(value: any): void {
     if (isDateLike(value)) {
       this.update(value.toISOString());
@@ -111,9 +113,9 @@ import { selectAuthenticationStatus } from '@app/store/account';
 @Injectable({ providedIn: 'root' })
 export class AccountFacade {
   readonly authenticated$: Observable<boolean> = this.store.pipe(
-    select(selectHydrationStatus),
+    select(selectHydratedStatus),
     filter(Boolean),
-    switchMap(() => this.store.select(selectAuthenticationStatus))
+    switchMap(() => this.store.select(selectHydratedStatus))
   );
 
   constructor(private readonly store: Store<State>) {}
