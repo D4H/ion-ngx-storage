@@ -9,26 +9,64 @@ ion-ngx-storage is a module for Ionic 4/Angular applications which copies an app
 `npm install --save @d4h/ion-ngx-storage`
 
 ## Configuration
-`IonNgxConfig` accepts these configuration options:
-
-* `name: string`: The name of your application. Used internally as an Ionic Storage table key. All data is stored _per application_ as a single object.
-* `features?: Array<string>`: Optional array of features to store to the device instead of the entire application state.
-* `ionicStorage: StorageConfig`: [Ionic Storage](https://ionicframework.com/docs/building/storage#configuring-storage) configuration.
-
-## Use
-ion-ngx-storage **must** be added to the root state. `IonNgxModule` injects its meta reducer through the [`META_REDUCERS`](https://next.ngrx.io/guide/store/recipes/injecting#injecting-meta-reducers) provider.
 
 ```typescript
-import { IonNgxConfig, IonNgxModule } from '@d4h/ion-ngx-storage';
+export interface StorageConfig<T extends object = {}> {
+  features?: Array<string>;
+  name: string;
 
-const storageConfig: IonNgxConfig = {
+  storage?: {
+    description?: string;
+    driver?: string | Array<string>;
+    name?: string;
+    size?: number;
+    version?: number;
+  }
+
+  transform?: {
+    read<T>(state: T): T;
+    write<T>(state: T): T;
+  }
+}
+```
+
+* `features?: Array<string>`: Optional array of features to store to the device instead of the entire application state.
+* `name: string`: The name of your application. Used internally as an Ionic Storage table key. All data is stored _per application_ as a single object.
+* `storage?: StorageConfig`: [Ionic Storage](https://ionicframework.com/docs/building/storage#configuring-storage) configuration.
+* `transform?: StorageStateTransform`: Transformations to be applied before being written to storage, and after being read. See [State Transform](#state-transformation) below.
+
+## Default Configuration
+
+```typescript
+export const defaultConfig: StorageModuleConfig = {
+  features: [],
+  name: 'ION_NGX_STORAGE',
+
+  storage: {
+    name: 'ion_ngx_storage'
+  },
+
+  transform: {
+    read: state => state,
+    write: state => state
+  }
+};
+```
+
+## Use
+Your module **must** import `StoreModule.forRoot` and `EffectsModule.forRoot` in order for ion-ngx-storage to function. After application initialization and initial hydration, ion-ngx-storage will write a copy of the state (or features) to the device after action dispatch.
+
+```typescript
+import { StorageConfig, StorageModule } from '@d4h/ion-ngx-storage';
+
+const storageConfig: StorageConfig<AppState> = {
   name: 'my_application_name',
   features: ['foo']
 };
 
 @NgModule({
   imports: [
-    IonNgxModule.forRoot(storageConfig),
+    StorageModule.forRoot(storageConfig),
     StoreModule.forRoot(reducers, { metaReducers }),
     EffectsModule.forRoot(effects)
   ]
@@ -36,7 +74,30 @@ const storageConfig: IonNgxConfig = {
 export class AppModule {}
 ```
 
-## Deferring Store Access
+### State Transformation
+ion-ngx-storage builds upon other software. It directly calls [Ionic/Storage](https://ionicframework.com/docs/building/storage), which in turn uses [localForage](https://github.com/localForage/localForage), and which ultimately calls [`Storage.setItem`](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem) for writes. localForage [serializes](https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js#L252-L274) data before it writes. Certain objects e.g. a Moment.js instance, will cause the operation to fail with an error. The `read` and `write` transformation functions work as expected: they accept the state object _before write_ and _after read_ and perform a transformation.
+
+The below examples traverse the state and convert and Date or Moment instances into strings before being written, then back into Date objects after write.
+
+```typescript
+export function read<T>(state: T): T {
+  return traverse(state).map(function(value: any): void {
+    if (isIsoDate(value)) {
+      this.update(new Date(value), true);
+    }
+  });
+}
+
+export function write<T>(state: T): T {
+  return traverse(state).map(function(value: any): void {
+    if (isDateLike(value)) {
+      this.update(value.toISOString());
+    }
+  });
+}
+```
+
+### Deferring Store Access
 Although ion-ngx-storage hydrates data from storage once NgRx Effects dispatches `ROOT_EFFECTS_INIT`, the asynchronous nature of Angular and NgRx make it likely your application will attempts to read from the state it is ready. Applications which rely on the NgRx store to determine i.e. authentication status must be modified in a way which defers assessment until after hydration. Take the below example:
 
 1. `AccountFacade` is a [facade](https://medium.com/@thomasburlesonIA/ngrx-facades-better-state-management-82a04b9a1e39). Its `authenticated$` accessors defers emitting a value until after hydration.
