@@ -4,7 +4,7 @@ import isIsoDate from 'is-iso-date';
 import moment from 'moment';
 import traverse from 'traverse';
 
-import { isDateLike, read, transform, write } from '../../lib/tools';
+import { isDateLike, read, write } from '../../lib/tools';
 
 export function testStruct(): { source: object, read: object, write: object } {
   const source = {

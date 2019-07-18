@@ -18,5 +18,5 @@ export {
 } from './lib/store';
 
 export {
-  transform
+  dateTransform
 } from './lib/tools';

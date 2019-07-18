@@ -30,7 +30,7 @@ export function write<T>(state: T): T {
   });
 }
 
-export const transform: IonNgxStateTransform = {
+export const dateTransform: IonNgxStateTransform = {
   write,
   read
 };
