@@ -1,4 +1,4 @@
-[![Codeship Status for D4H/ion-ngx-storage](https://app.codeship.com/projects/8ec182c0-643f-0137-757e-1a7608ff9ea0/status?branch=master)](https://app.codeship.com/projects/344846)
+[![Codeship Status for D4H/ion-ngx-storage](https://app.codeship.com/projects/2395cdd0-896c-0137-056a-1ede412c3fd8/status?branch=master)](https://app.codeship.com/projects/354562)
 ![npm](https://img.shields.io/npm/v/@d4h/ion-ngx-storage.svg)
 
 # ion-ngx-storage
