@@ -24,10 +24,10 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@angular/common": "~8.1.0",
-    "@angular/core": "~8.1.0",
-    "@ngrx/effects": "^8.1.0",
-    "@ngrx/store": "^8.1.0"
+    "@angular/common": ">= 8 < 9",
+    "@angular/core": ">= 8 < 9",
+    "@ngrx/effects": ">= 8 < 9",
+    "@ngrx/store": ">= 8 < 9"
   },
   "dependencies": {
     "@ionic/storage": "^2.2.0",
