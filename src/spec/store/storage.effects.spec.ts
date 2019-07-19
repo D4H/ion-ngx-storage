@@ -1,7 +1,6 @@
 import faker from 'faker';
 import { ReplaySubject } from 'rxjs';
 import { Storage } from '@ionic/storage';
-import { StoreModule } from '@ngrx/store';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 
@@ -16,19 +15,10 @@ import {
   WriteSuccess
 } from '../../lib/store/storage.actions';
 
-import {
-  StorageEffects
-} from '../../lib/store/storage.effects';
-
-import {
-  ModuleConfig,
-  StateTransform
-} from '../../lib/providers';
-
-import { StorageTestModule } from '../storage-test.module';
+import { MODULE_CONFIG, defaultConfig, provideStorage } from '../../lib/providers';
+import { StorageEffects } from '../../lib/store/storage.effects';
 
 describe('StorageEffects', () => {
-  let action: { type: string, [key: string]: any };
   let actions: ReplaySubject<any>;
   let effects: StorageEffects;
   let storage: Storage;
@@ -37,16 +27,16 @@ describe('StorageEffects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        StorageTestModule.forRoot()
-      ],
       providers: [
-        provideMockActions(() => actions)
+        StorageEffects,
+        provideMockActions(() => actions),
+        { provide: MODULE_CONFIG, useValue: defaultConfig },
+        { provide: Storage, useFactory: provideStorage, deps: [MODULE_CONFIG] }
       ]
     });
 
-    effects = TestBed.get(StorageEffects);
-    storage = TestBed.get(Storage);
+    effects = TestBed.get<StorageEffects>(StorageEffects);
+    storage = TestBed.get<Storage>(Storage);
     key = faker.random.uuid();
     val = faker.random.uuid();
   });
@@ -58,8 +48,7 @@ describe('StorageEffects', () => {
   describe('clear$', () => {
     beforeEach(() => {
       actions = new ReplaySubject(1);
-      action = Clear();
-      actions.next(action);
+      actions.next(Clear());
     });
 
     it('should return ReadSuccess action', done => {
@@ -84,16 +73,28 @@ describe('StorageEffects', () => {
   });
 
   describe('read$', () => {
-    beforeEach(() => {
-      actions = new ReplaySubject(1);
-      action = Read({ key });
-      actions.next(action);
-    });
-
     it('should return ReadSuccess action', done => {
+      actions = new ReplaySubject(1);
+      actions.next(Read({ key }));
+
       storage.set(key, val).then(() => {
         effects.read$.subscribe(result => {
           expect(result).toEqual(ReadSuccess({ value: val }));
+          done();
+        });
+      });
+    });
+
+    it('should apply the transform function if supplied', done => {
+      const replacement = faker.random.uuid();
+      const transform = value => replacement;
+
+      actions = new ReplaySubject(1);
+      actions.next(Read({ key, transform }));
+
+      storage.set(key, val).then(() => {
+        effects.read$.subscribe(result => {
+          expect(result).toEqual(ReadSuccess({ value: replacement }));
           done();
         });
       });
@@ -103,8 +104,7 @@ describe('StorageEffects', () => {
   describe('readError$', () => {
     beforeEach(() => {
       actions = new ReplaySubject(1);
-      action = ReadError({ error: undefined });
-      actions.next(action);
+      actions.next(ReadError({ error: undefined }));
     });
 
     it('should return ReadSuccess with no payload', done => {
@@ -116,13 +116,10 @@ describe('StorageEffects', () => {
   });
 
   describe('write$', () => {
-    beforeEach(() => {
-      actions = new ReplaySubject(1);
-      action = Write({ key, value: val });
-      actions.next(action);
-    });
-
     it('should return WriteSuccess action', done => {
+      actions = new ReplaySubject(1);
+      actions.next(Write({ key, value: val }));
+
       effects.write$.subscribe(result => {
         expect(result).toEqual(WriteSuccess({ value: val }));
         done();
@@ -130,6 +127,9 @@ describe('StorageEffects', () => {
     });
 
     it('write value to storeage', done => {
+      actions = new ReplaySubject(1);
+      actions.next(Write({ key, value: val }));
+
       effects.write$.subscribe(() =>
         storage.get(key).then(outcome => {
           expect(outcome).toBe(val);
@@ -137,13 +137,27 @@ describe('StorageEffects', () => {
         })
       );
     });
+
+    it('should apply the transform function if supplied', done => {
+      const replacement = faker.random.uuid();
+      const transform = value => replacement;
+
+      actions = new ReplaySubject(1);
+      actions.next(Write({ key, value: val, transform }));
+
+      storage.set(key, val).then(() => {
+        effects.write$.subscribe(result => {
+          expect(result).toEqual(WriteSuccess({ value: replacement }));
+          done();
+        });
+      });
+    });
   });
 
   describe('writeError$', () => {
     beforeEach(() => {
       actions = new ReplaySubject(1);
-      action = WriteError({ error: undefined });
-      actions.next(action);
+      actions.next(WriteError({ error: undefined }));
     });
 
     it('should return WriteSuccess with no payload', done => {
@@ -151,19 +165,6 @@ describe('StorageEffects', () => {
         expect(result).toEqual(WriteSuccess({ value: undefined }));
         done();
       });
-    });
-  });
-
-  describe('synchronize$', () => {
-    beforeEach(() => {
-      actions = new ReplaySubject(1);
-      action = { type: faker.random.uuid() };
-      actions.next(action);
-    });
-
-    it('should copy application state to storage', done => {
-      // TODO
-      done();
     });
   });
 });

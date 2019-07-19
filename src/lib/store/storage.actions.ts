@@ -16,7 +16,7 @@ export const Clear = createAction(
 
 export const Read = createAction(
   ActionTypes.READ,
-  props<{ key: string }>()
+  props<{ key: string, transform?(state: any): any }>()
 );
 
 export const ReadError = createAction(
@@ -31,7 +31,7 @@ export const ReadSuccess = createAction(
 
 export const Write = createAction(
   ActionTypes.WRITE,
-  props<{ key: string, value: any }>()
+  props<{ key: string, value: any, transform?(state: any): any }>()
 );
 
 export const WriteError = createAction(

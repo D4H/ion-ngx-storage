@@ -15,6 +15,7 @@ import {
   STORAGE_META_REDUCER,
   STORAGE_REDUCER,
   StorageEffects,
+  StorageSyncEffects,
   initialState,
   reducer,
   storageMetaReducer
@@ -28,7 +29,10 @@ import {
 @NgModule({
   imports: [
     StoreModule.forFeature(STORAGE_REDUCER, reducer),
-    EffectsModule.forFeature([StorageEffects])
+    EffectsModule.forFeature([
+      StorageEffects,
+      StorageSyncEffects
+    ])
   ]
 })
 export class StorageModule {
