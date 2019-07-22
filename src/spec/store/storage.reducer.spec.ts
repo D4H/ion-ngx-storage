@@ -22,6 +22,13 @@ describe('Storage Reducer', () => {
       expect(reducer(initialState, action)).toBe(initialState);
     });
 
+    describe('HydrateSuccess', () => {
+      it('should not change state with HydrateSuccess', () => {
+        action = { type: ActionTypes.HYDRATE_SUCCESS };
+        expect(reducer(initialState, action)).toEqual(initialState);
+      });
+    });
+
     describe('Clear', () => {
       it('should not change state with Clear', () => {
         action = { type: ActionTypes.CLEAR };

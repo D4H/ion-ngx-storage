@@ -1,4 +1,4 @@
-export * from './storage-sync.effects';
+export * from './hydrate.effects';
 export * from './storage.actions';
 export * from './storage.effects';
 export * from './storage.facade';

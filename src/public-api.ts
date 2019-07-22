@@ -8,6 +8,7 @@ export {
 } from './lib/providers';
 
 export {
+  HydrateSuccess,
   StorageFacade,
   selectHydratedStatus,
   selectStorageState

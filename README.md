@@ -74,7 +74,7 @@ const storageConfig: StorageConfig<AppState> = {
 export class AppModule {}
 ```
 
-### State Transformation
+## State Transformation
 ion-ngx-storage builds upon other software. It directly calls [Ionic/Storage](https://ionicframework.com/docs/building/storage), which in turn uses [localForage](https://github.com/localForage/localForage), and which ultimately calls [`Storage.setItem`](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem) for writes. localForage [serializes](https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js#L252-L274) data before it writes. Certain objects e.g. a Moment.js instance, cause operations to fail with an error.
 
 The `read` and `write` functions transform the entire NgrX state.
@@ -96,6 +96,41 @@ function write<T>(state: T): T {
       this.update(value.toISOString());
     }
   });
+}
+```
+
+### Waiting for Hydration
+Internally, ion-ngx-storage operates in the following manner:
+
+1. Register `StorageEffects` and `HydrateEffects`.
+2. Dispatch `READ` from `HydrateEffects` with config payload.
+3. Read state from storage, apply `transform.read` and dispatch `READ_SUCCESS`.
+4. Merge the result into the application state via meta-reducer.
+4. If `{ hydrated: true }` then dispatch `HYDRATE_SUCCESS`.
+
+### HydrateSuccess Action
+ion-ngx-storage makes the `HydrateSuccess` action public for use in NgRx effects.
+
+```typescript
+import { HydrateSuccess } from '@d4h/ion-ngx-storage';
+
+@Injectable()
+export class AppEffects {
+  // Keep up splash screen until after hydration.
+  init$: Observable<Action> = createEffect(
+    () => this.actions$.pipe(
+      ofType(HydrateSuccess),
+      tap(() => {
+        this.platform.ready().then(() => {
+          this.statusBar.styleLightContent();
+          this.splashScreen.hide();
+        });
+      })
+    ),
+    { dispatch: false }
+  );
+
+  constructor(/* ... */) {}
 }
 ```
 

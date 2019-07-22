@@ -3,6 +3,7 @@ import faker from 'faker';
 import {
   ActionTypes,
   Clear,
+  HydrateSuccess,
   Read,
   ReadError,
   ReadSuccess,
@@ -14,6 +15,7 @@ import {
 describe('Storage Actions', () => {
   enum ComparisonActionTypes {
     CLEAR = '[ion-ngx-storage] Clear Storage',
+    HYDRATE_SUCCESS = '[ion-ngx-storage] Storage Hydrate Success',
     READ = '[ion-ngx-storage] Storage Read',
     READ_ERROR = '[ion-ngx-storage] Storage Read Error',
     READ_SUCCESS = '[ion-ngx-storage] Storage Read Success',
@@ -36,6 +38,13 @@ describe('Storage Actions', () => {
     it('should match comparison action', () => {
       const action: any = { type: ComparisonActionTypes.CLEAR };
       expect(Clear()).toEqual(action);
+    });
+  });
+
+  describe('HydrateSuccess', () => {
+    it('should match comparison action', () => {
+      const action: any = { type: ComparisonActionTypes.HYDRATE_SUCCESS };
+      expect(HydrateSuccess()).toEqual(action);
     });
   });
 

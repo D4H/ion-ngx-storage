@@ -10,13 +10,17 @@ import {
   Read,
   ReadError,
   ReadSuccess,
+  StorageEffects,
   Write,
   WriteError,
   WriteSuccess
-} from '../../lib/store/storage.actions';
+} from '../../lib/store';
 
-import { MODULE_CONFIG, defaultConfig, provideStorage } from '../../lib/providers';
-import { StorageEffects } from '../../lib/store/storage.effects';
+import {
+  MODULE_CONFIG,
+  defaultConfig,
+  provideStorage
+} from '../../lib/providers';
 
 describe('StorageEffects', () => {
   let actions: ReplaySubject<any>;

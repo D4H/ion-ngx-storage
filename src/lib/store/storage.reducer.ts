@@ -1,7 +1,5 @@
 import {
   Action,
-  ActionReducer,
-  ActionReducerMap,
   MemoizedSelector,
   createFeatureSelector,
   createReducer,

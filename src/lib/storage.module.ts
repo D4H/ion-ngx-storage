@@ -12,13 +12,12 @@ import {
 } from './providers';
 
 import {
+  HydrateEffects,
   STORAGE_META_REDUCER,
   STORAGE_REDUCER,
   StorageEffects,
-  StorageSyncEffects,
   initialState,
-  reducer,
-  storageMetaReducer
+  reducer
 } from './store';
 
 /**
@@ -31,7 +30,7 @@ import {
     StoreModule.forFeature(STORAGE_REDUCER, reducer),
     EffectsModule.forFeature([
       StorageEffects,
-      StorageSyncEffects
+      HydrateEffects
     ])
   ]
 })

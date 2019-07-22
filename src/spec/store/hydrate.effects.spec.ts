@@ -6,10 +6,16 @@ import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
-import { ActionTypes, Read, ReadSuccess, Write } from '../../lib/store/storage.actions';
+import {
+  ActionTypes,
+  HydrateSuccess,
+  Read,
+  ReadSuccess,
+  Write
+} from '../../lib/store/storage.actions';
+
+import { HydrateEffects } from '../../lib/store/hydrate.effects';
 import { MODULE_CONFIG, ModuleConfig, provideStorage } from '../../lib/providers';
-import { STORAGE_REDUCER } from '../../lib/store/storage.reducer';
-import { StorageSyncEffects } from '../../lib/store/storage-sync.effects';
 
 interface TestState {
   foo: {
@@ -24,7 +30,7 @@ interface TestState {
 describe('StorageEffects', () => {
   let actions: ReplaySubject<any>;
   let config: ModuleConfig;
-  let effects: StorageSyncEffects;
+  let effects: HydrateEffects;
   let initialState: TestState;
   let storage: Storage;
   let store: MockStore<TestState>;
@@ -51,7 +57,7 @@ describe('StorageEffects', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        StorageSyncEffects,
+        HydrateEffects,
         provideMockActions(() => actions),
         provideMockStore({ initialState }),
         { provide: MODULE_CONFIG, useValue: config },
@@ -59,7 +65,7 @@ describe('StorageEffects', () => {
       ]
     });
 
-    effects = TestBed.get<StorageSyncEffects>(StorageSyncEffects);
+    effects = TestBed.get<HydrateEffects>(HydrateEffects);
     storage = TestBed.get<Storage>(Storage);
     store = TestBed.get<Store<TestState>>(Store);
   });
@@ -68,8 +74,40 @@ describe('StorageEffects', () => {
     storage.clear();
   });
 
-  describe('synchronize$', () => {
-    it('should not dispatch when storage is { hydrated: false }', fakeAsync(() => {
+  describe('hydrate$', () => {
+    it('should not dispatch with READ_SUCCESS when storage is not hydrated', fakeAsync(() => {
+      let data;
+
+      store.setState({ ...initialState,
+        ion_ngx_storage: { hydrated: false }
+      });
+
+      actions = new ReplaySubject(1);
+      actions.next({ type: ActionTypes.READ_SUCCESS });
+
+      effects.hydrate$.subscribe(result => data = result);
+      tick(500);
+      expect(data).toBe(undefined);
+    }));
+
+    it('should dispatch with READ_SUCCESS when storage is hydrated', done => {
+      store.setState({
+        ...initialState,
+        ion_ngx_storage: { hydrated: true }
+      });
+
+      actions = new ReplaySubject(1);
+      actions.next({ type: ActionTypes.READ_SUCCESS });
+
+      effects.hydrate$.subscribe(result => {
+        expect(result).toEqual(HydrateSuccess());
+        done();
+      });
+    });
+  });
+
+  describe('dehydrate$', () => {
+    it('should not dispatch when storage is hydrated', fakeAsync(() => {
       let data;
 
       store.setState({
@@ -80,7 +118,7 @@ describe('StorageEffects', () => {
       actions = new ReplaySubject(1);
       actions.next({ type: faker.random.uuid() });
 
-      effects.synchronize$.subscribe(result => data = result);
+      effects.dehydrate$.subscribe(result => data = result);
       tick(100);
       expect(data).toBe(undefined);
     }));
@@ -93,7 +131,7 @@ describe('StorageEffects', () => {
         store.setState({ ...initialState, ion_ngx_storage: { hydrated: true } });
         actions = new ReplaySubject(1);
         actions.next({ type });
-        effects.synchronize$.subscribe(result => data = result);
+        effects.dehydrate$.subscribe(result => data = result);
         tick(100);
         expect(data).toBe(undefined);
       });
@@ -114,7 +152,7 @@ describe('StorageEffects', () => {
       actions = new ReplaySubject(1);
       actions.next({ type: faker.random.uuid() });
 
-      effects.synchronize$.subscribe(result => {
+      effects.dehydrate$.subscribe(result => {
         expect(result).toEqual(action);
         done();
       });

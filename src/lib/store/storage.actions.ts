@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 
 export enum ActionTypes {
   CLEAR = '[ion-ngx-storage] Clear Storage',
+  HYDRATE_SUCCESS = '[ion-ngx-storage] Storage Hydrate Success',
   READ = '[ion-ngx-storage] Storage Read',
   READ_ERROR = '[ion-ngx-storage] Storage Read Error',
   READ_SUCCESS = '[ion-ngx-storage] Storage Read Success',
@@ -12,6 +13,10 @@ export enum ActionTypes {
 
 export const Clear = createAction(
   ActionTypes.CLEAR
+);
+
+export const HydrateSuccess = createAction(
+  ActionTypes.HYDRATE_SUCCESS
 );
 
 export const Read = createAction(
