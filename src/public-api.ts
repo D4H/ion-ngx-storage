@@ -3,7 +3,7 @@
  */
 
 export {
-  ModuleConfig as StorageModuleConfig,
+  ModuleConfig as StorageConfig,
   StateTransform as StorageStateTransform
 } from './lib/providers';
 
@@ -15,7 +15,7 @@ export {
 } from './lib/store';
 
 export {
-  StorageModule as StorageModule
+  StorageModule
 } from './lib/storage.module';
 
 export {

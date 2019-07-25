@@ -1,6 +1,6 @@
 {
   "name": "@d4h/ion-ngx-storage",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": false,
   "description": "Synchronize Ionic application NgRx store to native device storage.",
   "homepage": "https://www.npmjs.com/package/@d4h/ion-ngx-storage",

@@ -11,7 +11,7 @@ ion-ngx-storage is a module for Ionic 4/Angular applications which copies an app
 ## Configuration
 
 ```typescript
-export interface StorageConfig<T extends object = {}> {
+interface StorageConfig<T extends object = {}> {
   features?: Array<string>;
   name: string;
 
@@ -38,7 +38,7 @@ export interface StorageConfig<T extends object = {}> {
 ## Default Configuration
 
 ```typescript
-export const defaultConfig: StorageModuleConfig = {
+const defaultConfig: StorageConfig = {
   features: [],
   name: 'ION_NGX_STORAGE',
 
