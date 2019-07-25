@@ -16,11 +16,7 @@ import {
   WriteSuccess
 } from '../../lib/store';
 
-import {
-  MODULE_CONFIG,
-  defaultConfig,
-  provideStorage
-} from '../../lib/providers';
+import { STORAGE_CONFIG, defaultConfig, provideStorage } from '../../lib/providers';
 
 describe('StorageEffects', () => {
   let actions: ReplaySubject<any>;
@@ -34,8 +30,8 @@ describe('StorageEffects', () => {
       providers: [
         StorageEffects,
         provideMockActions(() => actions),
-        { provide: MODULE_CONFIG, useValue: defaultConfig },
-        { provide: Storage, useFactory: provideStorage, deps: [MODULE_CONFIG] }
+        { provide: STORAGE_CONFIG, useValue: defaultConfig },
+        { provide: Storage, useFactory: provideStorage, deps: [STORAGE_CONFIG] }
       ]
     });
 

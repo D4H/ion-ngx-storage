@@ -30,7 +30,7 @@ import {
   Write
 } from './storage.actions';
 
-import { MODULE_CONFIG, ModuleConfig } from '../providers';
+import { ModuleConfig, STORAGE_CONFIG } from '../providers';
 import { STORAGE_REDUCER } from './storage.reducer';
 import { pickFeatures } from '../tools';
 
@@ -84,7 +84,7 @@ export class HydrateEffects implements OnInitEffects {
   ));
 
   constructor(
-    @Inject(MODULE_CONFIG) private readonly config: ModuleConfig,
+    @Inject(STORAGE_CONFIG) private readonly config: ModuleConfig,
     private readonly actions$: Actions,
     private readonly store$: Store<any>
   ) {}

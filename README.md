@@ -35,7 +35,7 @@ interface StorageConfig<T extends object = {}> {
 * `storage?: StorageConfig`: [Ionic Storage](https://ionicframework.com/docs/building/storage#configuring-storage) configuration.
 * `transform?: StorageStateTransform`: Transformations to be applied before being written to storage, and after being read. See [State Transform](#state-transformation) below.
 
-## Default Configuration
+### Default Configuration
 
 ```typescript
 const defaultConfig: StorageConfig = {
@@ -51,6 +51,29 @@ const defaultConfig: StorageConfig = {
     write: state => state
   }
 };
+```
+
+### Configuration Injection
+The public `STORAGE_CONFIG` token allows injection of the configuration in cases of module composition.
+
+```typescript
+import { STORAGE_CONFIG, StorageConfig, StorageModule } from '@d4h/ion-ngx-storage';
+
+@NgModule({
+  imports: [
+    StorageModule.forRoot()
+  ]
+})
+export class AppFeatureModule {
+  static forFeature(config: FeatureConfig): ModuleWithProviders {
+    return {
+      ngModule: AppFeatureModule,
+      providers: [
+        { provide: STORAGE_CONFIG, useValue: config.storage }
+      ]
+    };
+  }
+}
 ```
 
 ## Use

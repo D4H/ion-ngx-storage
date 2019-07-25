@@ -33,8 +33,8 @@ export const defaultConfig: ModuleConfig = {
   }
 };
 
-export const MODULE_CONFIG = new InjectionToken<StorageConfig>(
-  'ION_NGX_MODULE_CONFIG'
+export const STORAGE_CONFIG = new InjectionToken<StorageConfig>(
+  'ION_NGX_STORAGE_CONFIG'
 );
 
 /**

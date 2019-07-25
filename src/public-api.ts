@@ -3,6 +3,7 @@
  */
 
 export {
+  STORAGE_CONFIG,
   ModuleConfig as StorageConfig,
   StateTransform as StorageStateTransform
 } from './lib/providers';

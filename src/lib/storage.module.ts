@@ -5,8 +5,8 @@ import { Storage } from '@ionic/storage';
 import { StoreModule } from '@ngrx/store';
 
 import {
-  MODULE_CONFIG,
   ModuleConfig,
+  STORAGE_CONFIG,
   defaultConfig,
   provideStorage
 } from './providers';
@@ -41,13 +41,13 @@ export class StorageModule {
       providers: [
         STORAGE_META_REDUCER,
         {
-          provide: MODULE_CONFIG,
+          provide: STORAGE_CONFIG,
           useValue: { ...defaultConfig, ...config }
         },
         {
           provide: Storage,
           useFactory: provideStorage,
-          deps: [MODULE_CONFIG]
+          deps: [STORAGE_CONFIG]
         }
       ]
     };

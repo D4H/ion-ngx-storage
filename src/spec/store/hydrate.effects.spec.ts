@@ -15,7 +15,7 @@ import {
 } from '../../lib/store/storage.actions';
 
 import { HydrateEffects } from '../../lib/store/hydrate.effects';
-import { MODULE_CONFIG, ModuleConfig, provideStorage } from '../../lib/providers';
+import { ModuleConfig, STORAGE_CONFIG, provideStorage } from '../../lib/providers';
 
 interface TestState {
   foo: {
@@ -60,8 +60,8 @@ describe('StorageEffects', () => {
         HydrateEffects,
         provideMockActions(() => actions),
         provideMockStore({ initialState }),
-        { provide: MODULE_CONFIG, useValue: config },
-        { provide: Storage, useFactory: provideStorage, deps: [MODULE_CONFIG] }
+        { provide: STORAGE_CONFIG, useValue: config },
+        { provide: Storage, useFactory: provideStorage, deps: [STORAGE_CONFIG] }
       ]
     });
 
