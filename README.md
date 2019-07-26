@@ -201,7 +201,7 @@ export class AuthenticatedGuard implements CanActivate {
 ```
 
 ## Support and Feedback
-Feel free to [open an issue](https://github.com/D4H/angular/issues/new), email <support@d4h.org> or tweet [@d4h](https://twitter.com/d4h/).
+Feel free to email <support@d4h.org> or tweet [@d4h](https://twitter.com/d4h/).
 
 ## License
 Copyright (C) 2019 [D4H](https://d4htechnologies.com/)
