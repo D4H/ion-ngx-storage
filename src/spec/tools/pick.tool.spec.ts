@@ -4,17 +4,11 @@ import { fromPairs, sampleSize, times } from 'lodash';
 import { pickFeatures } from '../../lib/tools';
 
 describe('pickFeatures', () => {
-  let keys: Array<string>;
   let state: object;
 
   beforeEach(() => {
     state = fromPairs(
       times(15, () => [faker.random.uuid(), faker.random.uuid()])
-    );
-
-    keys = sampleSize(
-      Object.keys(state),
-      faker.random.number({ min: 0, max: 20 })
     );
   });
 
@@ -24,6 +18,11 @@ describe('pickFeatures', () => {
   });
 
   it('should return an object comprising only picked keys', () => {
+    const keys: Array<string> = sampleSize(
+      Object.keys(state),
+      faker.random.number({ min: 1, max: 20 })
+    );
+
     const result = keys.reduce(
       (acc, key) => ({ ...acc, [key]: state[key] }),
       {}
