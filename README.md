@@ -131,18 +131,17 @@ Internally, ion-ngx-storage operates in the following manner:
 4. Merge the result into the application state via meta-reducer.
 4. If `{ hydrated: true }` then dispatch `HYDRATE_SUCCESS`.
 
-### HydrateSuccess Action
-ion-ngx-storage makes the `HydrateSuccess` action public for use in NgRx effects.
+### ReadSuccess Action
+ion-ngx-storage makes the `ReadSuccess` action public for use in NgRx effects.
 
 ```typescript
-import { HydrateSuccess } from '@d4h/ion-ngx-storage';
+import { ReadSuccess } from '@d4h/ion-ngx-storage';
 
 @Injectable()
 export class AppEffects {
   // Keep up splash screen until after hydration.
-  init$: Observable<Action> = createEffect(
-    () => this.actions$.pipe(
-      ofType(HydrateSuccess),
+  init$: Observable<Action> = createEffect(() => this.actions$.pipe(
+      ofType(ReadSuccess),
       tap(() => {
         this.platform.ready().then(() => {
           this.statusBar.styleLightContent();

@@ -3,25 +3,23 @@ import faker from 'faker';
 import {
   ActionTypes,
   Clear,
-  HydrateSuccess,
   Read,
   ReadError,
+  ReadResult,
   ReadSuccess,
-  Write,
   WriteError,
   WriteSuccess
 } from '../../lib/store';
 
 describe('Storage Actions', () => {
   enum ComparisonActionTypes {
-    CLEAR = '[ion-ngx-storage] Clear Storage',
-    HYDRATE_SUCCESS = '[ion-ngx-storage] Storage Hydrate Success',
-    READ = '[ion-ngx-storage] Storage Read',
-    READ_ERROR = '[ion-ngx-storage] Storage Read Error',
-    READ_SUCCESS = '[ion-ngx-storage] Storage Read Success',
-    WRITE = '[ion-ngx-storage] Storage Write',
-    WRITE_ERROR = '[ion-ngx-storage] Storage Write Error',
-    WRITE_SUCCESS = '[ion-ngx-storage] Storage Write Success'
+    CLEAR = '[ion-ngx-storage] Clear',
+    READ = '[ion-ngx-storage] Read',
+    READ_ERROR = '[ion-ngx-storage] Read Error',
+    READ_RESULT = '[ion-ngx-storage] Read Result',
+    READ_SUCCESS = '[ion-ngx-storage] Read Success',
+    WRITE_ERROR = '[ion-ngx-storage] Write Error',
+    WRITE_SUCCESS = '[ion-ngx-storage] Write Success'
   }
 
   describe('ActionTypes', () => {
@@ -41,19 +39,18 @@ describe('Storage Actions', () => {
     });
   });
 
-  describe('HydrateSuccess', () => {
+  describe('ReadSuccess', () => {
     it('should match comparison action', () => {
-      const action: any = { type: ComparisonActionTypes.HYDRATE_SUCCESS };
-      expect(HydrateSuccess()).toEqual(action);
+      const action: any = { type: ComparisonActionTypes.READ_SUCCESS };
+      expect(ReadSuccess()).toEqual(action);
     });
   });
 
   describe('Read', () => {
     it('should match comparison action', () => {
       const key = faker.random.uuid();
-      const transform = state => state;
-      const action: any = { type: ComparisonActionTypes.READ, transform, key };
-      expect(Read({ key, transform })).toEqual(action);
+      const action: any = { type: ComparisonActionTypes.READ, key };
+      expect(Read({ key })).toEqual(action);
     });
   });
 
@@ -65,21 +62,11 @@ describe('Storage Actions', () => {
     });
   });
 
-  describe('ReadSuccess', () => {
+  describe('ReadResult', () => {
     it('should match comparison action', () => {
       const value = faker.random.uuid();
-      const action: any = { type: ComparisonActionTypes.READ_SUCCESS, value };
-      expect(ReadSuccess({ value })).toEqual(action);
-    });
-  });
-
-  describe('Write', () => {
-    it('should match comparison action', () => {
-      const key = faker.random.uuid();
-      const value = faker.random.uuid();
-      const transform = state => state;
-      const action: any = { type: ComparisonActionTypes.WRITE, transform, key, value };
-      expect(Write({ key, value, transform })).toEqual(action);
+      const action: any = { type: ComparisonActionTypes.READ_RESULT, value };
+      expect(ReadResult({ value })).toEqual(action);
     });
   });
 
@@ -94,8 +81,8 @@ describe('Storage Actions', () => {
   describe('WriteSuccess', () => {
     it('should match comparison action', () => {
       const value = faker.random.uuid();
-      const action: any = { type: ComparisonActionTypes.WRITE_SUCCESS, value };
-      expect(WriteSuccess({ value })).toEqual(action);
+      const action: any = { type: ComparisonActionTypes.WRITE_SUCCESS };
+      expect(WriteSuccess()).toEqual(action);
     });
   });
 });

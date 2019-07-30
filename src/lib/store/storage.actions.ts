@@ -1,27 +1,26 @@
 import { createAction, props } from '@ngrx/store';
 
 export enum ActionTypes {
-  CLEAR = '[ion-ngx-storage] Clear Storage',
-  HYDRATE_SUCCESS = '[ion-ngx-storage] Storage Hydrate Success',
-  READ = '[ion-ngx-storage] Storage Read',
-  READ_ERROR = '[ion-ngx-storage] Storage Read Error',
-  READ_SUCCESS = '[ion-ngx-storage] Storage Read Success',
-  WRITE = '[ion-ngx-storage] Storage Write',
-  WRITE_ERROR = '[ion-ngx-storage] Storage Write Error',
-  WRITE_SUCCESS = '[ion-ngx-storage] Storage Write Success'
+  CLEAR = '[ion-ngx-storage] Clear',
+  READ = '[ion-ngx-storage] Read',
+  READ_ERROR = '[ion-ngx-storage] Read Error',
+  READ_RESULT = '[ion-ngx-storage] Read Result',
+  READ_SUCCESS = '[ion-ngx-storage] Read Success',
+  WRITE_ERROR = '[ion-ngx-storage] Write Error',
+  WRITE_SUCCESS = '[ion-ngx-storage] Write Success'
 }
 
 export const Clear = createAction(
   ActionTypes.CLEAR
 );
 
-export const HydrateSuccess = createAction(
-  ActionTypes.HYDRATE_SUCCESS
+export const ReadSuccess = createAction(
+  ActionTypes.READ_SUCCESS
 );
 
 export const Read = createAction(
   ActionTypes.READ,
-  props<{ key: string, transform?(state: any): any }>()
+  props<{ key: string }>()
 );
 
 export const ReadError = createAction(
@@ -29,14 +28,9 @@ export const ReadError = createAction(
   props<{ error: any }>()
 );
 
-export const ReadSuccess = createAction(
-  ActionTypes.READ_SUCCESS,
+export const ReadResult = createAction(
+  ActionTypes.READ_RESULT,
   props<{ value: any }>()
-);
-
-export const Write = createAction(
-  ActionTypes.WRITE,
-  props<{ key: string, value: any, transform?(state: any): any }>()
 );
 
 export const WriteError = createAction(
@@ -45,6 +39,5 @@ export const WriteError = createAction(
 );
 
 export const WriteSuccess = createAction(
-  ActionTypes.WRITE_SUCCESS,
-  props<{ value: any }>()
+  ActionTypes.WRITE_SUCCESS
 );

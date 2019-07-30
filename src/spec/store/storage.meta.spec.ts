@@ -24,7 +24,7 @@ describe('Meta Reducer', () => {
   });
 
   describe('storageMetaReducer', () => {
-    const reducer = (state, action) => state; // NOOP for sake of tests.
+    const reducer = (state, action) => state;
     const metaReducer = storageMetaReducer(reducer);
 
     let action: { type: string, value: object };
@@ -60,11 +60,11 @@ describe('Meta Reducer', () => {
       expect(metaReducer(state, action)).toEqual(state);
     });
 
-    it('should merge states when the action is READ_SUCCESS', () => {
-      action = { ...action, type: ActionTypes.READ_SUCCESS };
+    it('should merge states when the action is READ_RESULT', () => {
+      action = { ...action, type: ActionTypes.READ_RESULT };
       expect(metaReducer(state, action)).toEqual({ ...state, ...action.value });
 
-      action = { type: ActionTypes.READ_SUCCESS, value: undefined };
+      action = { type: ActionTypes.READ_RESULT, value: undefined };
       expect(metaReducer(state, action)).toEqual({ ...state, ...action.value });
     });
   });

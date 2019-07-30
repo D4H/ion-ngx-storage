@@ -12,7 +12,6 @@ import {
 } from './providers';
 
 import {
-  HydrateEffects,
   STORAGE_META_REDUCER,
   STORAGE_REDUCER,
   StorageEffects,
@@ -28,10 +27,7 @@ import {
 @NgModule({
   imports: [
     StoreModule.forFeature(STORAGE_REDUCER, reducer),
-    EffectsModule.forFeature([
-      StorageEffects,
-      HydrateEffects
-    ])
+    EffectsModule.forFeature([StorageEffects])
   ]
 })
 export class StorageModule {

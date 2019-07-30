@@ -8,7 +8,7 @@ import {
 } from '@ngrx/store';
 
 import { InjectionToken } from '@angular/core';
-import { ReadSuccess } from './storage.actions';
+import { ReadResult } from './storage.actions';
 
 /**
  * Storage State and Reducer
@@ -26,7 +26,7 @@ export const initialState: StorageState = {
 export function reducer(state: StorageState, action: Action): StorageState {
   return createReducer(
     initialState,
-    on(ReadSuccess, (): StorageState => ({ hydrated: true }))
+    on(ReadResult, (): StorageState => ({ hydrated: true }))
   )(state, action);
 }
 

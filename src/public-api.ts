@@ -9,8 +9,11 @@ export {
 } from './lib/providers';
 
 export {
-  HydrateSuccess,
+  Clear,
+  ReadError,
+  ReadSuccess,
   StorageFacade,
+  WriteError,
   selectHydratedStatus,
   selectStorageState
 } from './lib/store';

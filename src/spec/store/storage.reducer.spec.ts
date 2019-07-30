@@ -12,69 +12,57 @@ import {
 
 describe('Storage Reducer', () => {
   describe('reducer', () => {
-    let action: { type: string, value?: any };
-
-    beforeEach(() => {
-      action = { type: faker.random.uuid() };
-    });
-
     it('should return the previous state with any action', () => {
-      expect(reducer(initialState, action)).toBe(initialState);
-    });
-
-    describe('HydrateSuccess', () => {
-      it('should not change state with HydrateSuccess', () => {
-        action = { type: ActionTypes.HYDRATE_SUCCESS };
-        expect(reducer(initialState, action)).toEqual(initialState);
-      });
+      expect(reducer(initialState, { type: faker.random.uuid() }))
+        .toBe(initialState);
     });
 
     describe('Clear', () => {
       it('should not change state with Clear', () => {
-        action = { type: ActionTypes.CLEAR };
-        expect(reducer(initialState, action)).toEqual(initialState);
+        expect(reducer(initialState, { type: ActionTypes.CLEAR }))
+          .toEqual(initialState);
       });
     });
 
     describe('Read', () => {
       it('should not change state with Read', () => {
-        action = { type: ActionTypes.READ };
-        expect(reducer(initialState, action)).toEqual(initialState);
+        expect(reducer(initialState, { type: ActionTypes.READ }))
+          .toEqual(initialState);
       });
     });
 
     describe('ReadError', () => {
       it('should change not change state with ReadError', () => {
-        action = { type: ActionTypes.READ_ERROR };
-        expect(reducer(initialState, action)).toEqual(initialState);
+        expect(reducer(initialState, { type: ActionTypes.READ_ERROR }))
+          .toEqual(initialState);
+      });
+    });
+
+    describe('ReadResult', () => {
+      it('should change hydrated state with ReadResult', () => {
+        expect(reducer(initialState, { type: ActionTypes.READ_RESULT }))
+          .toEqual({ hydrated: true });
       });
     });
 
     describe('ReadSuccess', () => {
-      it('should change hydrated state with ReadSuccess', () => {
-        action = { type: ActionTypes.READ_SUCCESS };
-        expect(reducer(initialState, action)).toEqual({ hydrated: true });
-      });
-    });
-
-    describe('Write', () => {
-      it('should not change state with Write', () => {
-        action = { type: ActionTypes.WRITE };
-        expect(reducer(initialState, action)).toEqual(initialState);
+      it('should not change state with ReadSuccess', () => {
+        expect(reducer(initialState, { type: ActionTypes.READ_SUCCESS }))
+          .toEqual(initialState);
       });
     });
 
     describe('WriteError', () => {
       it('should not change state with WriteError', () => {
-        action = { type: ActionTypes.WRITE_ERROR };
-        expect(reducer(initialState, action)).toEqual(initialState);
+        expect(reducer(initialState, { type: ActionTypes.WRITE_ERROR }))
+          .toEqual(initialState);
       });
     });
 
     describe('WriteSuccess', () => {
       it('should not change state with WriteSuccess', () => {
-        action = { type: ActionTypes.WRITE_SUCCESS };
-        expect(reducer(initialState, action)).toEqual(initialState);
+        expect(reducer(initialState, { type: ActionTypes.WRITE_SUCCESS }))
+          .toEqual(initialState);
       });
     });
   });

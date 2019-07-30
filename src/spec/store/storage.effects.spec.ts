@@ -1,7 +1,9 @@
 import faker from 'faker';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ReplaySubject } from 'rxjs';
 import { Storage } from '@ionic/storage';
-import { TestBed } from '@angular/core/testing';
+import { Store } from '@ngrx/store';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 
 import {
@@ -9,36 +11,50 @@ import {
   Clear,
   Read,
   ReadError,
+  ReadResult,
   ReadSuccess,
   StorageEffects,
-  Write,
   WriteError,
   WriteSuccess
 } from '../../lib/store';
 
-import { STORAGE_CONFIG, defaultConfig, provideStorage } from '../../lib/providers';
+import { Factory, State } from '../factories';
+import { ModuleConfig, STORAGE_CONFIG, provideStorage } from '../../lib/providers';
+import { dateTransform } from '../../lib/tools';
 
 describe('StorageEffects', () => {
+  let action: any;
   let actions: ReplaySubject<any>;
+  let config: ModuleConfig;
   let effects: StorageEffects;
-  let storage: Storage;
+  let initialState: State;
   let key: string;
-  let val: string;
+  let storage: Storage;
+  let store: MockStore<State>;
+  let val: State;
 
   beforeEach(() => {
+    config = Factory.build('ModuleConfig', {
+      transform: dateTransform
+    });
+
+    initialState = Factory.build('TestState');
+    key = faker.random.uuid();
+    val = initialState;
+
     TestBed.configureTestingModule({
       providers: [
         StorageEffects,
         provideMockActions(() => actions),
-        { provide: STORAGE_CONFIG, useValue: defaultConfig },
+        provideMockStore({ initialState }),
+        { provide: STORAGE_CONFIG, useValue: config },
         { provide: Storage, useFactory: provideStorage, deps: [STORAGE_CONFIG] }
       ]
     });
 
     effects = TestBed.get<StorageEffects>(StorageEffects);
     storage = TestBed.get<Storage>(Storage);
-    key = faker.random.uuid();
-    val = faker.random.uuid();
+    store = TestBed.get<Store<State>>(Store);
   });
 
   afterEach(() => {
@@ -51,10 +67,10 @@ describe('StorageEffects', () => {
       actions.next(Clear());
     });
 
-    it('should return ReadSuccess action', done => {
+    it('should return ReadResult action', done => {
       storage.set(key, val).then(() => {
         effects.clear$.subscribe(result => {
-          expect(result).toEqual(ReadSuccess({ value: undefined }));
+          expect(result).toEqual(ReadResult({ value: undefined }));
           done();
         });
       });
@@ -63,8 +79,8 @@ describe('StorageEffects', () => {
     it('should clear storage', done => {
       storage.set(key, val).then(() => {
         effects.clear$.subscribe(() => {
-          storage.get(key).then(value => {
-            expect(value).toBe(null);
+          storage.get(key).then(result => {
+            expect(result).toBe(null);
             done();
           });
         });
@@ -73,97 +89,139 @@ describe('StorageEffects', () => {
   });
 
   describe('read$', () => {
-    it('should return ReadSuccess action', done => {
+    it('should return ReadResult action', done => {
+      action = ReadResult({ value: null });
+      actions = new ReplaySubject(1);
+      actions.next(Read({ key }));
+
+      effects.read$.subscribe(result => {
+        expect(result).toEqual(action);
+        done();
+      });
+    });
+
+    it('should return value of key from storage', done => {
+      action = ReadResult({ value: val });
       actions = new ReplaySubject(1);
       actions.next(Read({ key }));
 
       storage.set(key, val).then(() => {
         effects.read$.subscribe(result => {
-          expect(result).toEqual(ReadSuccess({ value: val }));
+          expect(result).toEqual(action);
           done();
         });
       });
     });
 
-    it('should apply the transform function if supplied', done => {
-      const replacement = faker.random.uuid();
-      const transform = value => replacement;
-
+    it('should apply transform.read()', done => {
+      action = ReadResult({ value: config.transform.read(initialState) });
       actions = new ReplaySubject(1);
-      actions.next(Read({ key, transform }));
+      actions.next(Read({ key }));
 
-      storage.set(key, val).then(() => {
+      storage.set(key, initialState).then(() => {
         effects.read$.subscribe(result => {
-          expect(result).toEqual(ReadSuccess({ value: replacement }));
+          expect(result).toEqual(action);
           done();
         });
       });
     });
   });
 
-  describe('readError$', () => {
-    beforeEach(() => {
-      actions = new ReplaySubject(1);
-      actions.next(ReadError({ error: undefined }));
-    });
+  describe('readResult$', () => {
+    it('should not dispatch ReadSuccess() when storage is not hydrated', fakeAsync(() => {
+      let data;
 
-    it('should return ReadSuccess with no payload', done => {
-      effects.readError$.subscribe(result => {
-        expect(result).toEqual(ReadSuccess({ value: undefined }));
+      store.setState({ ...initialState,
+        ion_ngx_storage: { hydrated: false }
+      });
+
+      actions = new ReplaySubject(1);
+      actions.next({ type: ActionTypes.READ_RESULT });
+
+      effects.readResult$.subscribe(result => data = result);
+      tick(500);
+      expect(data).toBe(undefined);
+    }));
+
+    it('should dispatch with ReadSuccess() when storage is hydrated', done => {
+      store.setState({
+        ...initialState,
+        ion_ngx_storage: { hydrated: true }
+      });
+
+      action = ReadSuccess();
+      actions = new ReplaySubject(1);
+      actions.next({ type: ActionTypes.READ_RESULT });
+
+      effects.readResult$.subscribe(result => {
+        expect(result).toEqual(action);
         done();
       });
     });
   });
 
   describe('write$', () => {
-    it('should return WriteSuccess action', done => {
-      actions = new ReplaySubject(1);
-      actions.next(Write({ key, value: val }));
+    it('should not dispatch when storage is not hydrated', fakeAsync(() => {
+      let data;
 
-      effects.write$.subscribe(result => {
-        expect(result).toEqual(WriteSuccess({ value: val }));
-        done();
+      store.setState({
+        ...initialState,
+        ion_ngx_storage: { hydrated: false }
       });
-    });
-
-    it('write value to storeage', done => {
-      actions = new ReplaySubject(1);
-      actions.next(Write({ key, value: val }));
-
-      effects.write$.subscribe(() =>
-        storage.get(key).then(outcome => {
-          expect(outcome).toBe(val);
-          done();
-        })
-      );
-    });
-
-    it('should apply the transform function if supplied', done => {
-      const replacement = faker.random.uuid();
-      const transform = value => replacement;
 
       actions = new ReplaySubject(1);
-      actions.next(Write({ key, value: val, transform }));
+      actions.next({ type: faker.random.uuid() });
 
-      storage.set(key, val).then(() => {
+      effects.write$.subscribe(result => data = result);
+      tick(100);
+      expect(data).toBe(undefined);
+    }));
+
+    it('should not dispatch when storage is hydrated but action is internal', fakeAsync(() => {
+      Object.values(ActionTypes).forEach(type => {
+        let data;
+        store.setState({ ...initialState, ion_ngx_storage: { hydrated: true } });
+        actions = new ReplaySubject(1);
+        actions.next({ type });
+        effects.write$.subscribe(result => data = result);
+        tick(100);
+        expect(data).toBe(undefined);
+      });
+    }));
+
+    it('should dispatch WriteSuccess() when hydrated and action is external', done => {
+      action = WriteSuccess();
+      store.setState({ ...initialState, ion_ngx_storage: { hydrated: true } });
+      actions = new ReplaySubject(1);
+
+      storage.get(config.name).then(value => {
+        expect(value).toBe(null);
+        actions.next({ type: faker.random.uuid() });
+
         effects.write$.subscribe(result => {
-          expect(result).toEqual(WriteSuccess({ value: replacement }));
+          expect(result).toEqual(action);
           done();
         });
       });
     });
-  });
 
-  describe('writeError$', () => {
-    beforeEach(() => {
+    it('should copy the state to the store', done => {
+      action = WriteSuccess();
+      store.setState({ ...initialState, ion_ngx_storage: { hydrated: true } });
       actions = new ReplaySubject(1);
-      actions.next(WriteError({ error: undefined }));
-    });
 
-    it('should return WriteSuccess with no payload', done => {
-      effects.writeError$.subscribe(result => {
-        expect(result).toEqual(WriteSuccess({ value: undefined }));
-        done();
+      storage.get(config.name).then(value => {
+        expect(value).toBe(null);
+        actions.next({ type: faker.random.uuid() });
+
+        effects.write$.subscribe(() => {
+          store.subscribe(state => {
+            storage.get(config.name).then(result => {
+              expect(result).toEqual(config.transform.write(state));
+              done();
+            });
+          });
+        });
       });
     });
   });
