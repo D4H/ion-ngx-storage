@@ -10,6 +10,7 @@ import {
 } from '../../lib/store';
 
 import { Factory, State } from '../factories';
+import { STORAGE_REDUCER } from '../../lib/providers';
 
 describe('StorageFacade', () => {
   let facade: StorageFacade;
@@ -21,7 +22,7 @@ describe('StorageFacade', () => {
     value = faker.random.uuid();
 
     initialState = Factory.build('TestState', {
-      ion_ngx_storage: { hydrated: value }
+      [STORAGE_REDUCER]: { hydrated: value }
     });
 
     TestBed.configureTestingModule({

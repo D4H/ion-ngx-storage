@@ -3,12 +3,13 @@ import { Action } from '@ngrx/store';
 
 import {
   ActionTypes,
-  STORAGE_REDUCER,
   initialState,
   reducer,
   selectHydratedStatus,
   selectStorageState
 } from '../../lib/store';
+
+import { STORAGE_REDUCER } from '../../lib/providers';
 
 describe('Storage Reducer', () => {
   describe('reducer', () => {

@@ -1,6 +1,8 @@
 import faker from 'faker';
 import deepmerge from 'deepmerge';
 
+import { STORAGE_REDUCER } from '../../lib/providers';
+
 /**
  * Fake Application State
  * =============================================================================
@@ -10,7 +12,7 @@ import deepmerge from 'deepmerge';
 export interface State {
   [key: string]: any;
 
-  ion_ngx_storage: {
+  [STORAGE_REDUCER]: {
     hydrated: boolean;
   };
 }
@@ -37,7 +39,7 @@ export function TestState(
       [faker.random.objectElement()]: faker.date.past()
     },
 
-    ion_ngx_storage: {
+    [STORAGE_REDUCER]: {
       hydrated: false
     }
   }, attributes);

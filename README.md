@@ -40,7 +40,7 @@ interface StorageConfig<T extends object = {}> {
 ```typescript
 const defaultConfig: StorageConfig = {
   features: [],
-  name: 'ION_NGX_STORAGE',
+  name: 'ion_ngx_storage',
 
   storage: {
     name: 'ion_ngx_storage'

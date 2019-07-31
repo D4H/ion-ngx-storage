@@ -18,8 +18,14 @@ import {
   WriteSuccess
 } from '../../lib/store';
 
+import {
+  ModuleConfig,
+  STORAGE_CONFIG,
+  STORAGE_REDUCER,
+  provideStorage
+} from '../../lib/providers';
+
 import { Factory, State } from '../factories';
-import { ModuleConfig, STORAGE_CONFIG, provideStorage } from '../../lib/providers';
 import { dateTransform } from '../../lib/tools';
 
 describe('StorageEffects', () => {
@@ -132,7 +138,7 @@ describe('StorageEffects', () => {
       let data;
 
       store.setState({ ...initialState,
-        ion_ngx_storage: { hydrated: false }
+        [STORAGE_REDUCER]: { hydrated: false }
       });
 
       actions = new ReplaySubject(1);
@@ -146,7 +152,7 @@ describe('StorageEffects', () => {
     it('should dispatch with ReadSuccess() when storage is hydrated', done => {
       store.setState({
         ...initialState,
-        ion_ngx_storage: { hydrated: true }
+        [STORAGE_REDUCER]: { hydrated: true }
       });
 
       action = ReadSuccess();
@@ -166,7 +172,7 @@ describe('StorageEffects', () => {
 
       store.setState({
         ...initialState,
-        ion_ngx_storage: { hydrated: false }
+        [STORAGE_REDUCER]: { hydrated: false }
       });
 
       actions = new ReplaySubject(1);
@@ -178,9 +184,14 @@ describe('StorageEffects', () => {
     }));
 
     it('should not dispatch when storage is hydrated but action is internal', fakeAsync(() => {
+      let data;
+
+      store.setState({
+        ...initialState,
+        [STORAGE_REDUCER]: { hydrated: true }
+      });
+
       Object.values(ActionTypes).forEach(type => {
-        let data;
-        store.setState({ ...initialState, ion_ngx_storage: { hydrated: true } });
         actions = new ReplaySubject(1);
         actions.next({ type });
         effects.write$.subscribe(result => data = result);
@@ -191,8 +202,12 @@ describe('StorageEffects', () => {
 
     it('should dispatch WriteSuccess() when hydrated and action is external', done => {
       action = WriteSuccess();
-      store.setState({ ...initialState, ion_ngx_storage: { hydrated: true } });
       actions = new ReplaySubject(1);
+
+      store.setState({
+        ...initialState,
+        [STORAGE_REDUCER]: { hydrated: true }
+      });
 
       storage.get(config.name).then(value => {
         expect(value).toBe(null);
@@ -207,8 +222,12 @@ describe('StorageEffects', () => {
 
     it('should copy the state to the store', done => {
       action = WriteSuccess();
-      store.setState({ ...initialState, ion_ngx_storage: { hydrated: true } });
       actions = new ReplaySubject(1);
+
+      store.setState({
+        ...initialState,
+        [STORAGE_REDUCER]: { hydrated: true }
+      });
 
       storage.get(config.name).then(value => {
         expect(value).toBe(null);

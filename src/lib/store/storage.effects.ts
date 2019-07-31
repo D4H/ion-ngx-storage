@@ -25,8 +25,11 @@ import {
   WriteSuccess
 } from './storage.actions';
 
-import { ModuleConfig, STORAGE_CONFIG } from '../providers';
-import { STORAGE_REDUCER } from './storage.reducer';
+import {
+  ModuleConfig,
+  STORAGE_CONFIG,
+  STORAGE_REDUCER
+} from '../providers';
 
 @Injectable()
 export class StorageEffects implements OnInitEffects {

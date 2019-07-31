@@ -7,13 +7,13 @@ import { StoreModule } from '@ngrx/store';
 import {
   ModuleConfig,
   STORAGE_CONFIG,
+  STORAGE_REDUCER,
   defaultConfig,
   provideStorage
 } from './providers';
 
 import {
   STORAGE_META_REDUCER,
-  STORAGE_REDUCER,
   StorageEffects,
   initialState,
   reducer

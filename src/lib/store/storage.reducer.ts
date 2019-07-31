@@ -9,6 +9,7 @@ import {
 
 import { InjectionToken } from '@angular/core';
 import { ReadResult } from './storage.actions';
+import { STORAGE_REDUCER } from '../providers';
 
 /**
  * Storage State and Reducer
@@ -29,8 +30,6 @@ export function reducer(state: StorageState, action: Action): StorageState {
     on(ReadResult, (): StorageState => ({ hydrated: true }))
   )(state, action);
 }
-
-export const STORAGE_REDUCER = 'ion_ngx_storage';
 
 /**
  * Storage Selectors

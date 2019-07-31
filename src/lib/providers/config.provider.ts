@@ -2,6 +2,13 @@ import { InjectionToken } from '@angular/core';
 import { Storage, StorageConfig } from '@ionic/storage';
 
 /**
+ * Root Storage Reducer Name
+ * =============================================================================
+ */
+
+export const STORAGE_REDUCER = 'ion_ngx_storage';
+
+/**
  * Storage Module Configuration
  * =============================================================================
  * @see https://ionicframework.com/docs/building/storage
@@ -21,10 +28,10 @@ export interface ModuleConfig<T extends object = {}> {
 
 export const defaultConfig: ModuleConfig = {
   features: [],
-  name: 'ION_NGX_STORAGE',
+  name: STORAGE_REDUCER,
 
   storage: {
-    name: 'ion_ngx_storage'
+    name: STORAGE_REDUCER
   },
 
   transform: {

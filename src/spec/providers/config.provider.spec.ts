@@ -1,14 +1,14 @@
-import { defaultConfig } from '../../lib/providers';
+import { defaultConfig, STORAGE_REDUCER } from '../../lib/providers';
 
 describe('Module Provider', () => {
   describe('defaultConfig', () => {
     it('should equal comparison configuration', () => {
       const comparisonConfig = {
         features: [],
-        name: 'ION_NGX_STORAGE',
+        name: STORAGE_REDUCER,
 
         storage: {
-          name: 'ion_ngx_storage'
+          name: STORAGE_REDUCER
         },
 
         transform: {
