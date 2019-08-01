@@ -1,7 +1,7 @@
 [![Codeship Status for D4H/ion-ngx-storage](https://app.codeship.com/projects/3862bfd0-911f-0137-6172-7e8373628817/status?branch=master)](https://app.codeship.com/projects/356368)
 ![npm](https://img.shields.io/npm/v/@d4h/ion-ngx-storage.svg)
 
-# ion-ngx-storage
+# @d4h/ion-ngx-storage
 ion-ngx-storage is a module for Ionic 4/Angular applications which copies an application's [NgRx](https://ngrx.io/) root state to the native device or browser through [Ionic/Storage](https://ionicframework.com/docs/building/storage).
 
 ## Installation
@@ -53,35 +53,13 @@ const defaultConfig: StorageConfig = {
 };
 ```
 
-### Configuration Injection
-The public `STORAGE_CONFIG` token allows injection of the configuration in cases of module composition.
-
-```typescript
-import { STORAGE_CONFIG, StorageConfig, StorageModule } from '@d4h/ion-ngx-storage';
-
-@NgModule({
-  imports: [
-    StorageModule.forRoot()
-  ]
-})
-export class AppFeatureModule {
-  static forFeature(config: FeatureConfig): ModuleWithProviders {
-    return {
-      ngModule: AppFeatureModule,
-      providers: [
-        { provide: STORAGE_CONFIG, useValue: config.storage }
-      ]
-    };
-  }
-}
-```
-
 ## Use
-Your module **must** import `StoreModule.forRoot` and `EffectsModule.forRoot` in order for ion-ngx-storage to function. After application initialization and initial hydration, ion-ngx-storage will write a copy of the state (or features) to the device after action dispatch.
+Import and call `StoreModule.forRoot()`. ion-ngx-storage read and write the application state without any additional configuration. After effects initialization, ion-ngx-storage writes a serialized copy of the root state to the device after each action dispatch.
 
 ```typescript
 import { StorageConfig, StorageModule } from '@d4h/ion-ngx-storage';
 
+// Optional configuration
 const storageConfig: StorageConfig<AppState> = {
   name: 'my_application_name',
   features: ['foo']
@@ -89,13 +67,15 @@ const storageConfig: StorageConfig<AppState> = {
 
 @NgModule({
   imports: [
-    StorageModule.forRoot(storageConfig),
     StoreModule.forRoot(reducers, { metaReducers }),
-    EffectsModule.forRoot(effects)
+    EffectsModule.forRoot(effects),
+    StorageModule.forRoot(storageConfig)
   ]
 })
 export class AppModule {}
 ```
+
+Your application **must** import `StoreModule.forRoot` and `EffectsModule.forRoot` in order for ion-ngx-storage to function.
 
 ## State Transformation
 ion-ngx-storage builds upon other software. It directly calls [Ionic/Storage](https://ionicframework.com/docs/building/storage), which in turn uses [localForage](https://github.com/localForage/localForage), and which ultimately calls [`Storage.setItem`](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem) for writes. localForage [serializes](https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js#L252-L274) data before it writes. Certain objects e.g. a Moment.js instance, cause operations to fail with an error.
@@ -131,7 +111,7 @@ Internally, ion-ngx-storage operates in the following manner:
 4. Merge the result into the application state via meta-reducer.
 4. If `{ hydrated: true }` then dispatch `HYDRATE_SUCCESS`.
 
-### ReadSuccess Action
+## ReadSuccess Action
 ion-ngx-storage makes the `ReadSuccess` action public for use in NgRx effects.
 
 ```typescript
@@ -156,7 +136,30 @@ export class AppEffects {
 }
 ```
 
-### Deferring Store Access
+## Inject Configuration
+The public `STORAGE_CONFIG` token allows injection of the configuration in cases of module composition.
+
+```typescript
+import { STORAGE_CONFIG, StorageConfig, StorageModule } from '@d4h/ion-ngx-storage';
+
+@NgModule({
+  imports: [
+    StorageModule.forRoot()
+  ]
+})
+export class AppFeatureModule {
+  static forFeature(config: FeatureConfig): ModuleWithProviders {
+    return {
+      ngModule: AppFeatureModule,
+      providers: [
+        { provide: STORAGE_CONFIG, useValue: config.storage }
+      ]
+    };
+  }
+}
+```
+
+## Deferring Store Access
 Although ion-ngx-storage hydrates data from storage once NgRx Effects dispatches `ROOT_EFFECTS_INIT`, the asynchronous nature of Angular and NgRx make it likely your application will attempts to read from the state it is ready. Applications which rely on the NgRx store to determine i.e. authentication status must be modified in a way which defers assessment until after hydration. Take the below example:
 
 1. `AccountFacade` is a [facade](https://medium.com/@thomasburlesonIA/ngrx-facades-better-state-management-82a04b9a1e39). Its `authenticated$` accessors defers emitting a value until after hydration.
