@@ -8,7 +8,9 @@ import {
   selectStorageState
 } from './storage.reducer';
 
-@Injectable({ providedIn: 'root' })
+import { StorageModule } from '../storage.module';
+
+@Injectable({ providedIn: StorageModule })
 export class StorageFacade {
   readonly state$: Observable<StorageState> = this.store.pipe(
     select(selectStorageState)

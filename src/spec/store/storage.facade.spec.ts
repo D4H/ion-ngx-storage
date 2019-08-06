@@ -27,6 +27,7 @@ describe('StorageFacade', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        StorageFacade,
         provideMockStore({ initialState })
       ]
     });

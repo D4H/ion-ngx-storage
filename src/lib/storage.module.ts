@@ -12,12 +12,9 @@ import {
   provideStorage
 } from './providers';
 
-import {
-  STORAGE_META_REDUCER,
-  StorageEffects,
-  initialState,
-  reducer
-} from './store';
+import { STORAGE_META_REDUCER } from './store/storage.meta';
+import { StorageEffects, } from './store/storage.effects';
+import { initialState, reducer } from './store/storage.reducer';
 
 /**
  * StorageModule Declaration
