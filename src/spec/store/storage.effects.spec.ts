@@ -134,6 +134,17 @@ describe('StorageEffects', () => {
   });
 
   describe('readResult$', () => {
+    it('should verify fakeAsync works', fakeAsync(() => {
+      const promise = new Promise(resolve => {
+        setTimeout(resolve, 10);
+      });
+
+      let done;
+      promise.then(() => done = true);
+      tick(50);
+      expect(done).toBeTruthy();
+    }));
+
     it('should not dispatch ReadSuccess() when storage is not hydrated', fakeAsync(() => {
       let data;
 
@@ -145,7 +156,7 @@ describe('StorageEffects', () => {
       actions.next({ type: ActionTypes.READ_RESULT });
 
       effects.readResult$.subscribe(result => data = result);
-      tick(500);
+      tick(50);
       expect(data).toBe(undefined);
     }));
 
@@ -179,7 +190,7 @@ describe('StorageEffects', () => {
       actions.next({ type: faker.random.uuid() });
 
       effects.write$.subscribe(result => data = result);
-      tick(100);
+      tick(50);
       expect(data).toBe(undefined);
     }));
 
@@ -195,7 +206,7 @@ describe('StorageEffects', () => {
         actions = new ReplaySubject(1);
         actions.next({ type });
         effects.write$.subscribe(result => data = result);
-        tick(100);
+        tick(50);
         expect(data).toBe(undefined);
       });
     }));
