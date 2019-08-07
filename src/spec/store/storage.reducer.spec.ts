@@ -3,13 +3,13 @@ import { Action } from '@ngrx/store';
 
 import {
   ActionTypes,
+  getHydratedStatus,
+  getStorageState,
   initialState,
-  reducer,
-  selectHydratedStatus,
-  selectStorageState
+  reducer
 } from '../../lib/store';
 
-import { STORAGE_REDUCER } from '../../lib/providers';
+import { STORAGE_FEATURE_KEY } from '../../lib/providers';
 
 describe('Storage Reducer', () => {
   describe('reducer', () => {
@@ -74,9 +74,9 @@ describe('Storage Reducer', () => {
     });
   });
 
-  describe('STORAGE_REDUCER', () => {
+  describe('STORAGE_FEATURE_KEY', () => {
     it('should equal the comparison value', () => {
-      expect(STORAGE_REDUCER).toEqual('ion_ngx_storage');
+      expect(STORAGE_FEATURE_KEY).toEqual('ion_ngx_storage');
     });
   });
 });
@@ -86,7 +86,7 @@ describe('Storage Selectors', () => {
 
   beforeEach(() => {
     state = {
-      [STORAGE_REDUCER]: initialState,
+      [STORAGE_FEATURE_KEY]: initialState,
 
       [faker.random.uuid()]: {
         [faker.random.uuid()]: faker.random.uuid()
@@ -98,15 +98,15 @@ describe('Storage Selectors', () => {
     };
   });
 
-  describe('selectStorageState', () => {
+  describe('getStorageState', () => {
     it('should return the feature state', () => {
-      expect(selectStorageState(state)).toEqual(initialState);
+      expect(getStorageState(state)).toEqual(initialState);
     });
   });
 
-  describe('selectHydratedStatus', () => {
+  describe('getHydratedStatus', () => {
     it('should return hydrated status', () => {
-      expect(selectHydratedStatus(state)).toBe(initialState.hydrated);
+      expect(getHydratedStatus(state)).toBe(initialState.hydrated);
     });
   });
 });

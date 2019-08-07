@@ -1,7 +1,7 @@
 import faker from 'faker';
 import deepmerge from 'deepmerge';
 
-import { STORAGE_REDUCER } from '../../lib/providers';
+import { STORAGE_FEATURE_KEY } from '../../lib/providers';
 
 /**
  * Fake Application State
@@ -12,7 +12,7 @@ import { STORAGE_REDUCER } from '../../lib/providers';
 export interface State {
   [key: string]: any;
 
-  [STORAGE_REDUCER]: {
+  [STORAGE_FEATURE_KEY]: {
     hydrated: boolean;
   };
 }
@@ -39,7 +39,7 @@ export function TestState(
       [faker.random.objectElement()]: faker.date.past()
     },
 
-    [STORAGE_REDUCER]: {
+    [STORAGE_FEATURE_KEY]: {
       hydrated: false
     }
   }, attributes);

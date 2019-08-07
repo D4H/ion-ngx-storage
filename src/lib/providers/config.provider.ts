@@ -6,7 +6,7 @@ import { Storage, StorageConfig } from '@ionic/storage';
  * =============================================================================
  */
 
-export const STORAGE_REDUCER = 'ion_ngx_storage';
+export const STORAGE_FEATURE_KEY = 'ion_ngx_storage';
 
 /**
  * Storage Module Configuration
@@ -28,10 +28,10 @@ export interface ModuleConfig<T extends object = {}> {
 
 export const defaultConfig: ModuleConfig = {
   features: [],
-  name: STORAGE_REDUCER,
+  name: STORAGE_FEATURE_KEY,
 
   storage: {
-    name: STORAGE_REDUCER
+    name: STORAGE_FEATURE_KEY
   },
 
   transform: {

@@ -1,5 +1,6 @@
 import {
   Action,
+  ActionReducer,
   MemoizedSelector,
   createFeatureSelector,
   createReducer,
@@ -9,26 +10,29 @@ import {
 
 import { InjectionToken } from '@angular/core';
 import { ReadResult } from './storage.actions';
-import { STORAGE_REDUCER } from '../providers';
+import { STORAGE_FEATURE_KEY } from '../providers';
 
 /**
  * Storage State and Reducer
  * ===========================================================================
  */
 
-export interface StorageState {
+export interface State {
   hydrated: boolean;
 }
 
-export const initialState: StorageState = {
+export const initialState: State = {
   hydrated: false
 };
 
-export function reducer(state: StorageState, action: Action): StorageState {
-  return createReducer(
+export const storageReducer: ActionReducer<State, Action>
+  = createReducer(
     initialState,
-    on(ReadResult, (): StorageState => ({ hydrated: true }))
-  )(state, action);
+    on(ReadResult, (): State => ({ hydrated: true }))
+  );
+
+export function reducer(state: State, action: Action): State {
+  return storageReducer(state, action);
 }
 
 /**
@@ -36,13 +40,13 @@ export function reducer(state: StorageState, action: Action): StorageState {
  * ===========================================================================
  */
 
-export const selectStorageState: MemoizedSelector<any, StorageState>
-  = createFeatureSelector<StorageState>(
-    STORAGE_REDUCER
+export const getStorageState: MemoizedSelector<any, State>
+  = createFeatureSelector<State>(
+    STORAGE_FEATURE_KEY
   );
 
-export const selectHydratedStatus: MemoizedSelector<StorageState, boolean>
+export const getHydratedStatus: MemoizedSelector<State, boolean>
   = createSelector(
-    selectStorageState,
-    (state: StorageState): boolean => state.hydrated
+    getStorageState,
+    (state: State): boolean => state.hydrated
   );

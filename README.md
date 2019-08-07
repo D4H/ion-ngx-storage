@@ -167,15 +167,15 @@ Although ion-ngx-storage hydrates data from storage once NgRx Effects dispatches
 3. Once this happens, [`switchMap`](https://www.learnrxjs.io/operators/transformation/switchmap.html) replaces the prior observable with a new one that contains the actual assessment of authentication status.
 
 ```typescript
-import { selectHydrationStatus } from '@d4h/ion-ngx-storage';
-import { selectAuthenticationStatus } from '@app/store/account';
+import { getHydrationStatus } from '@d4h/ion-ngx-storage';
+import { getAuthenticationStatus } from '@app/store/account';
 
 @Injectable({ providedIn: 'root' })
 export class AccountFacade {
   readonly authenticated$: Observable<boolean> = this.store.pipe(
-    select(selectHydratedStatus),
+    select(getHydratedStatus),
     filter(Boolean),
-    switchMap(() => this.store.select(selectHydratedStatus))
+    switchMap(() => this.store.select(getAuthenticationStatus))
   );
 
   constructor(private readonly store: Store<State>) {}

@@ -28,7 +28,7 @@ import {
 import {
   ModuleConfig,
   STORAGE_CONFIG,
-  STORAGE_REDUCER
+  STORAGE_FEATURE_KEY
 } from '../providers';
 
 @Injectable()
@@ -54,7 +54,7 @@ export class StorageEffects implements OnInitEffects {
     concatMap(action => of(action).pipe(
       withLatestFrom(this.store$),
       map(([, state]) => state),
-      filter(state => state[STORAGE_REDUCER] && state[STORAGE_REDUCER].hydrated)
+      filter(state => state[STORAGE_FEATURE_KEY] && state[STORAGE_FEATURE_KEY].hydrated)
     )),
     take(1),
     map(() => ReadSuccess())
@@ -78,7 +78,7 @@ export class StorageEffects implements OnInitEffects {
       withLatestFrom(this.store$),
       map(([, state]) => state)
     )),
-    filter(state => state[STORAGE_REDUCER] && state[STORAGE_REDUCER].hydrated),
+    filter(state => state[STORAGE_FEATURE_KEY] && state[STORAGE_FEATURE_KEY].hydrated),
     map(state => this.config.transform.write(state)),
     switchMap(state => from(this.storage.set(this.config.name, state)).pipe(
       map(() => WriteSuccess()),

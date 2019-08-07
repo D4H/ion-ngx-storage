@@ -5,12 +5,12 @@ import { TestBed } from '@angular/core/testing';
 
 import {
   StorageFacade,
-  selectHydratedStatus,
-  selectStorageState
+  getHydratedStatus,
+  getStorageState
 } from '../../lib/store';
 
 import { Factory, State } from '../factories';
-import { STORAGE_REDUCER } from '../../lib/providers';
+import { STORAGE_FEATURE_KEY } from '../../lib/providers';
 
 describe('StorageFacade', () => {
   let facade: StorageFacade;
@@ -22,7 +22,7 @@ describe('StorageFacade', () => {
     value = faker.random.uuid();
 
     initialState = Factory.build('TestState', {
-      [STORAGE_REDUCER]: { hydrated: value }
+      [STORAGE_FEATURE_KEY]: { hydrated: value }
     });
 
     TestBed.configureTestingModule({
@@ -41,7 +41,7 @@ describe('StorageFacade', () => {
       facade.state$.subscribe(result => {
         expect(result).toEqual({ hydrated: value });
 
-        store.select(selectStorageState).subscribe(selected => {
+        store.select(getStorageState).subscribe(selected => {
           expect(selected).toEqual(result);
           done();
         });
@@ -54,7 +54,7 @@ describe('StorageFacade', () => {
       facade.hydrated$.subscribe(result => {
         expect(result).toEqual(value);
 
-        store.select(selectHydratedStatus).subscribe(selected => {
+        store.select(getHydratedStatus).subscribe(selected => {
           expect(selected).toEqual(result);
           done();
         });

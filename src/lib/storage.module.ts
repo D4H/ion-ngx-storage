@@ -7,7 +7,7 @@ import { StoreModule } from '@ngrx/store';
 import {
   ModuleConfig,
   STORAGE_CONFIG,
-  STORAGE_REDUCER,
+  STORAGE_FEATURE_KEY,
   defaultConfig,
   provideStorage
 } from './providers';
@@ -23,7 +23,7 @@ import { initialState, reducer } from './store/storage.reducer';
 
 @NgModule({
   imports: [
-    StoreModule.forFeature(STORAGE_REDUCER, reducer),
+    StoreModule.forFeature(STORAGE_FEATURE_KEY, reducer),
     EffectsModule.forFeature([StorageEffects])
   ]
 })
