@@ -4,7 +4,7 @@ import faker from 'faker';
 import { Action, META_REDUCERS } from '@ngrx/store';
 
 import {
-  ActionTypes,
+  ReadResult,
   STORAGE_META_REDUCER,
   storageMetaReducer
 } from '../../lib/store';
@@ -61,10 +61,10 @@ describe('Meta Reducer', () => {
     });
 
     it('should merge states when the action is READ_RESULT', () => {
-      action = { ...action, type: ActionTypes.READ_RESULT };
+      action = { ...action, type: ReadResult.type };
       expect(metaReducer(state, action)).toEqual({ ...state, ...action.value });
 
-      action = { type: ActionTypes.READ_RESULT, value: undefined };
+      action = { type: ReadResult.type, value: undefined };
       expect(metaReducer(state, action)).toEqual({ ...state, ...action.value });
     });
   });
