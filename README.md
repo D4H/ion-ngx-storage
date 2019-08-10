@@ -22,18 +22,12 @@ interface StorageConfig<T extends object = {}> {
     size?: number;
     version?: number;
   }
-
-  transform?: {
-    read<T>(state: T): T;
-    write<T>(state: T): T;
-  }
 }
 ```
 
 * `features?: Array<string>`: Optional array of features to store to the device instead of the entire application state.
 * `name: string`: The name of your application. Used internally as an Ionic Storage table key. All data is stored _per application_ as a single object.
 * `storage?: StorageConfig`: [Ionic Storage](https://ionicframework.com/docs/building/storage#configuring-storage) configuration.
-* `transform?: StorageStateTransform`: Transformations to be applied before being written to storage, and after being read. See [State Transform](#state-transformation) below.
 
 ### Default Configuration
 
@@ -44,11 +38,6 @@ const defaultConfig: StorageConfig = {
 
   storage: {
     name: 'ion_ngx_storage'
-  },
-
-  transform: {
-    read: state => state,
-    write: state => state
   }
 };
 ```
@@ -77,39 +66,14 @@ export class AppModule {}
 
 Your application **must** import `StoreModule.forRoot` and `EffectsModule.forRoot` in order for ion-ngx-storage to function.
 
-## State Transformation
-ion-ngx-storage builds upon other software. It directly calls [Ionic/Storage](https://ionicframework.com/docs/building/storage), which in turn uses [localForage](https://github.com/localForage/localForage), and which ultimately calls [`Storage.setItem`](https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem) for writes. localForage [serializes](https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js#L252-L274) data before it writes. Certain objects e.g. a Moment.js instance, cause operations to fail with an error.
-
-The `read` and `write` functions transform the entire NgrX state.
-
-```typescript
-// _After_ read from storage.
-function read<T>(state: T): T {
-  return traverse(state).map(function(value: any): void {
-    if (isIsoDate(value)) {
-      this.update(new Date(value), true);
-    }
-  });
-}
-
-// _Before_ write to storage.
-function write<T>(state: T): T {
-  return traverse(state).map(function(value: any): void {
-    if (isDateLike(value)) {
-      this.update(value.toISOString());
-    }
-  });
-}
-```
-
 ### Waiting for Hydration
 Internally, ion-ngx-storage operates in the following manner:
 
 1. Register `StorageEffects` and `HydrateEffects`.
 2. Dispatch `READ` from `HydrateEffects` with config payload.
-3. Read state from storage, apply `transform.read` and dispatch `READ_SUCCESS`.
+3. Read state from storage and dispatch `READ_RESULT`.
 4. Merge the result into the application state via meta-reducer.
-4. If `{ hydrated: true }` then dispatch `HYDRATE_SUCCESS`.
+4. If `{ hydrated: true }` then dispatch `READ_SUCCESS`.
 
 ## ReadSuccess Action
 ion-ngx-storage makes the `ReadSuccess` action public for use in NgRx effects.

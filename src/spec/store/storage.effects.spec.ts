@@ -26,7 +26,6 @@ import {
 } from '../../lib/providers';
 
 import { Factory, State } from '../factories';
-import { dateTransform } from '../../lib/tools';
 
 describe('StorageEffects', () => {
   let action: any;
@@ -40,9 +39,7 @@ describe('StorageEffects', () => {
   let val: State;
 
   beforeEach(() => {
-    config = Factory.build('ModuleConfig', {
-      transform: dateTransform
-    });
+    config = Factory.build('ModuleConfig');
 
     initialState = Factory.build('TestState');
     key = faker.random.uuid();
@@ -112,19 +109,6 @@ describe('StorageEffects', () => {
       actions.next(Read({ key }));
 
       storage.set(key, val).then(() => {
-        effects.read$.subscribe(result => {
-          expect(result).toEqual(action);
-          done();
-        });
-      });
-    });
-
-    it('should apply transform.read()', done => {
-      action = ReadResult({ value: config.transform.read(initialState) });
-      actions = new ReplaySubject(1);
-      actions.next(Read({ key }));
-
-      storage.set(key, initialState).then(() => {
         effects.read$.subscribe(result => {
           expect(result).toEqual(action);
           done();
@@ -247,7 +231,7 @@ describe('StorageEffects', () => {
         effects.write$.subscribe(() => {
           store.subscribe(state => {
             storage.get(config.name).then(result => {
-              expect(result).toEqual(config.transform.write(state));
+              expect(result).toEqual(state);
               done();
             });
           });

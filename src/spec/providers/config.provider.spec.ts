@@ -9,11 +9,6 @@ describe('Module Provider', () => {
 
         storage: {
           name: STORAGE_FEATURE_KEY
-        },
-
-        transform: {
-          read: state => state,
-          write: state => state
         }
       };
 

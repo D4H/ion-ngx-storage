@@ -21,7 +21,3 @@ export {
 export {
   StorageModule
 } from './lib/storage.module';
-
-export {
-  dateTransform
-} from './lib/tools';

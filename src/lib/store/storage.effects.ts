@@ -43,7 +43,6 @@ export class StorageEffects implements OnInitEffects {
   read$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(Read),
     switchMap(action => from(this.storage.get(action.key)).pipe(
-      map((value: any) => this.config.transform.read(value)),
       map((value: any) => ReadResult({ value })),
       catchError(error => of(ReadError(error)))
     ))
@@ -79,7 +78,6 @@ export class StorageEffects implements OnInitEffects {
       map(([, state]) => state)
     )),
     filter(state => state[STORAGE_FEATURE_KEY] && state[STORAGE_FEATURE_KEY].hydrated),
-    map(state => this.config.transform.write(state)),
     switchMap(state => from(this.storage.set(this.config.name, state)).pipe(
       map(() => WriteSuccess()),
       catchError(error => of(WriteError({ error })))

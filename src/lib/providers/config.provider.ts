@@ -23,7 +23,6 @@ export interface ModuleConfig<T extends object = {}> {
   features?: Array<string>;
   name: string;
   storage?: StorageConfig;
-  transform?: StateTransform;
 }
 
 export const defaultConfig: ModuleConfig = {
@@ -32,11 +31,6 @@ export const defaultConfig: ModuleConfig = {
 
   storage: {
     name: STORAGE_FEATURE_KEY
-  },
-
-  transform: {
-    read: state => state,
-    write: state => state
   }
 };
 
