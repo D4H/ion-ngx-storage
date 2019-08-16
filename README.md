@@ -108,7 +108,7 @@ import { STORAGE_CONFIG, StorageConfig, StorageModule } from '@d4h/ion-ngx-stora
 
 @NgModule({
   imports: [
-    StorageModule.forRoot()
+    StorageModule
   ]
 })
 export class AppFeatureModule {

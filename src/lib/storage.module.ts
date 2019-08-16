@@ -17,39 +17,35 @@ import { StorageEffects } from './store/storage.effects';
 import { initialState, reducer } from './store/storage.reducer';
 import { storageMetaReducer } from './store/storage.meta';
 
-/**
- * StorageModule Declaration
- * =============================================================================
- */
-
 @NgModule({
   imports: [
     StoreModule.forFeature(STORAGE_FEATURE_KEY, reducer),
     EffectsModule.forFeature([StorageEffects])
+  ],
+  providers: [
+    {
+      provide: META_REDUCERS,
+      multi: true,
+
+      useFactory(): any {
+        return storageMetaReducer;
+      }
+    },
+    {
+      provide: Storage,
+      useFactory: provideStorage,
+      deps: [STORAGE_CONFIG]
+    }
   ]
 })
 export class StorageModule {
   static forRoot(config: ModuleConfig = defaultConfig): ModuleWithProviders {
     return {
       ngModule: StorageModule,
-
       providers: [
-        {
-          provide: META_REDUCERS,
-          multi: true,
-
-          useFactory(): any {
-            return storageMetaReducer;
-          }
-        },
         {
           provide: STORAGE_CONFIG,
           useValue: { ...defaultConfig, ...config }
-        },
-        {
-          provide: Storage,
-          useFactory: provideStorage,
-          deps: [STORAGE_CONFIG]
         }
       ]
     };
