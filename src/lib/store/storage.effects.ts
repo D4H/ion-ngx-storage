@@ -29,7 +29,7 @@ import {
   ModuleConfig,
   STORAGE_CONFIG,
   STORAGE_FEATURE_KEY
-} from '../providers';
+} from '../providers/config.provider';
 
 @Injectable()
 export class StorageEffects implements OnInitEffects {

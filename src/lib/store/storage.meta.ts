@@ -1,6 +1,4 @@
 import { Action, ActionReducer } from '@ngrx/store';
-import { META_REDUCERS } from '@ngrx/store';
-import { Provider } from '@angular/core';
 
 import { ReadResult } from './storage.actions';
 
@@ -22,9 +20,3 @@ export function storageMetaReducer<T>(
     }
   };
 }
-
-export const STORAGE_META_REDUCER: Provider = {
-  provide: META_REDUCERS,
-  useFactory: () => storageMetaReducer,
-  multi: true
-};

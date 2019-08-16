@@ -1,4 +1,5 @@
 import { EffectsModule } from '@ngrx/effects';
+import { META_REDUCERS } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { Storage } from '@ionic/storage';
@@ -12,9 +13,9 @@ import {
   provideStorage
 } from './providers';
 
-import { STORAGE_META_REDUCER } from './store/storage.meta';
-import { StorageEffects, } from './store/storage.effects';
+import { StorageEffects } from './store/storage.effects';
 import { initialState, reducer } from './store/storage.reducer';
+import { storageMetaReducer } from './store/storage.meta';
 
 /**
  * StorageModule Declaration
@@ -31,8 +32,16 @@ export class StorageModule {
   static forRoot(config: ModuleConfig = defaultConfig): ModuleWithProviders {
     return {
       ngModule: StorageModule,
+
       providers: [
-        STORAGE_META_REDUCER,
+        {
+          provide: META_REDUCERS,
+          multi: true,
+
+          useFactory(): any {
+            return storageMetaReducer;
+          }
+        },
         {
           provide: STORAGE_CONFIG,
           useValue: { ...defaultConfig, ...config }

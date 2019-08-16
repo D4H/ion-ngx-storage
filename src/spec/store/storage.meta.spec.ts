@@ -1,28 +1,11 @@
 // tslint:disable no-shadowed-variable
 
 import faker from 'faker';
-import { Action, META_REDUCERS } from '@ngrx/store';
+import { Action } from '@ngrx/store';
 
-import {
-  ReadResult,
-  STORAGE_META_REDUCER,
-  storageMetaReducer
-} from '../../lib/store';
+import { ReadResult, storageMetaReducer } from '../../lib/store';
 
 describe('Meta Reducer', () => {
-  describe('STORAGE_META_REDUCER', () => {
-    it('should equal the comparison provider', () => {
-      const comparisonProvider = {
-        provide: META_REDUCERS,
-        useFactory: () => storageMetaReducer,
-        multi: true
-      };
-
-      expect(JSON.stringify(STORAGE_META_REDUCER))
-        .toEqual(JSON.stringify(comparisonProvider));
-    });
-  });
-
   describe('storageMetaReducer', () => {
     const reducer = (state, action) => state;
     const metaReducer = storageMetaReducer(reducer);
