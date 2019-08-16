@@ -10,6 +10,7 @@ export {
 
 export {
   Clear,
+  Read,
   ReadError,
   ReadSuccess,
   StorageFacade,

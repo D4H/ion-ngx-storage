@@ -40,7 +40,6 @@ describe('StorageEffects', () => {
 
   beforeEach(() => {
     config = Factory.build('ModuleConfig');
-
     initialState = Factory.build('TestState');
     key = faker.random.uuid();
     val = initialState;
@@ -73,7 +72,7 @@ describe('StorageEffects', () => {
     it('should return ReadResult action', done => {
       storage.set(key, val).then(() => {
         effects.clear$.subscribe(result => {
-          expect(result).toEqual(ReadResult({ value: undefined }));
+          expect(result).toEqual(Read());
           done();
         });
       });
@@ -95,7 +94,7 @@ describe('StorageEffects', () => {
     it('should return ReadResult action', done => {
       action = ReadResult({ value: null });
       actions = new ReplaySubject(1);
-      actions.next(Read({ key }));
+      actions.next(Read());
 
       effects.read$.subscribe(result => {
         expect(result).toEqual(action);
@@ -106,9 +105,9 @@ describe('StorageEffects', () => {
     it('should return value of key from storage', done => {
       action = ReadResult({ value: val });
       actions = new ReplaySubject(1);
-      actions.next(Read({ key }));
+      actions.next(Read());
 
-      storage.set(key, val).then(() => {
+      storage.set(config.name, val).then(() => {
         effects.read$.subscribe(result => {
           expect(result).toEqual(action);
           done();

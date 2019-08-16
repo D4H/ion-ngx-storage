@@ -166,6 +166,28 @@ export class AuthenticatedGuard implements CanActivate {
 }
 ```
 
+## Logout/Reinitialization
+Many applications have some kind of logout action which resets the application to its in initial state. In these cases ion-ngx-storage resets to `{ hydrated: false }`, meaning it will no longer write device state to storage. In these cases you have to dispatch one `Clear` or `Read`:
+
+* `Clear`: Wipe the stored application state and triggers `Read` with an initial empty value.
+* `Read`: Reads the logged-out state and triggers reducer setting `{ hydrated: true }`.
+
+The difference in practice is whether you want to remove all content stored on the device.
+
+```typescript
+import { Read } from '@d4h/ion-ngx-storage';
+
+class LoginEffects {
+  logout$: Observable<Action> = createEffect(() => this.actions$.pipe(
+    ofType(Logout),
+    switchMap(() => [
+      Read(),
+      Navigate({ path: ['/login', 'username'] })
+    ])
+  ));
+}
+```
+
 ## Support and Feedback
 Feel free to email <support@d4h.org> or tweet [@d4h](https://twitter.com/d4h/).
 

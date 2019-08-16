@@ -19,8 +19,7 @@ export const ReadSuccess = createAction(
 );
 
 export const Read = createAction(
-  ActionTypes.READ,
-  props<{ key: string }>()
+  ActionTypes.READ
 );
 
 export const ReadError = createAction(

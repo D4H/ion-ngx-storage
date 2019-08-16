@@ -36,13 +36,13 @@ export class StorageEffects implements OnInitEffects {
   clear$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(Clear),
     switchMap(() => from(this.storage.clear()).pipe(
-      map(() => ReadResult({ value: undefined }))
+      map(() => Read())
     ))
   ));
 
   read$: Observable<Action> = createEffect(() => this.actions$.pipe(
     ofType(Read),
-    switchMap(action => from(this.storage.get(action.key)).pipe(
+    switchMap(action => from(this.storage.get(this.config.name)).pipe(
       map((value: any) => ReadResult({ value })),
       catchError(error => of(ReadError(error)))
     ))
@@ -92,6 +92,6 @@ export class StorageEffects implements OnInitEffects {
   ) {}
 
   ngrxOnInitEffects(): Action {
-    return Read({ key: this.config.name });
+    return Read();
   }
 }

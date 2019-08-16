@@ -48,9 +48,8 @@ describe('Storage Actions', () => {
 
   describe('Read', () => {
     it('should match comparison action', () => {
-      const key = faker.random.uuid();
-      const action: any = { type: ComparisonActionTypes.READ, key };
-      expect(Read({ key })).toEqual(action);
+      const action: any = { type: ComparisonActionTypes.READ };
+      expect(Read()).toEqual(action);
     });
   });
 
