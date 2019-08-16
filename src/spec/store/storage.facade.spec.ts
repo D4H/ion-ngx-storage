@@ -3,14 +3,9 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Store } from '@ngrx/store';
 import { TestBed } from '@angular/core/testing';
 
-import {
-  StorageFacade,
-  getHydratedStatus,
-  getStorageState
-} from '../../lib/store';
-
 import { Factory, State } from '../factories';
 import { STORAGE_FEATURE_KEY } from '../../lib/providers';
+import { StorageFacade, getHydrated, getStorageState } from '../../lib/store';
 
 describe('StorageFacade', () => {
   let facade: StorageFacade;
@@ -54,7 +49,7 @@ describe('StorageFacade', () => {
       facade.hydrated$.subscribe(result => {
         expect(result).toEqual(value);
 
-        store.select(getHydratedStatus).subscribe(selected => {
+        store.select(getHydrated).subscribe(selected => {
           expect(selected).toEqual(result);
           done();
         });

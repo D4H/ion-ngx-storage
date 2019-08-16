@@ -15,7 +15,7 @@ export {
   ReadSuccess,
   StorageFacade,
   WriteError,
-  getHydratedStatus,
+  getHydrated,
   getStorageState
 } from './lib/store';
 

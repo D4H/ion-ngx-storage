@@ -3,7 +3,7 @@ import { Action } from '@ngrx/store';
 
 import {
   ActionTypes,
-  getHydratedStatus,
+  getHydrated,
   getStorageState,
   initialState,
   reducer
@@ -104,9 +104,9 @@ describe('Storage Selectors', () => {
     });
   });
 
-  describe('getHydratedStatus', () => {
+  describe('getHydrated', () => {
     it('should return hydrated status', () => {
-      expect(getHydratedStatus(state)).toBe(initialState.hydrated);
+      expect(getHydrated(state)).toBe(initialState.hydrated);
     });
   });
 });

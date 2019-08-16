@@ -45,7 +45,7 @@ export const getStorageState: MemoizedSelector<any, State>
     STORAGE_FEATURE_KEY
   );
 
-export const getHydratedStatus: MemoizedSelector<State, boolean>
+export const getHydrated: MemoizedSelector<State, boolean>
   = createSelector(
     getStorageState,
     (state: State): boolean => state.hydrated

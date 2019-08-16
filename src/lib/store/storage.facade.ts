@@ -2,7 +2,7 @@ import { Store, select } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { State, getHydratedStatus, getStorageState } from './storage.reducer';
+import { State, getHydrated, getStorageState } from './storage.reducer';
 import { StorageModule } from '../storage.module';
 
 @Injectable({ providedIn: StorageModule })
@@ -12,7 +12,7 @@ export class StorageFacade {
   );
 
   readonly hydrated$: Observable<boolean> = this.store.pipe(
-    select(getHydratedStatus)
+    select(getHydrated)
   );
 
   constructor(private readonly store: Store<State>) {}
