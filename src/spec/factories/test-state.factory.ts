@@ -22,21 +22,21 @@ export function TestState(
 ): State {
   return deepmerge<State>({
     [faker.random.uuid()]: {
-      [faker.random.objectElement()]: faker.random.uuid(),
-      [faker.random.objectElement()]: faker.date.future(),
-      [faker.random.objectElement()]: faker.date.past()
+      [faker.random.uuid()]: faker.random.uuid(),
+      [faker.random.uuid()]: faker.date.future(),
+      [faker.random.uuid()]: faker.date.past()
     },
 
     [faker.random.uuid()]: {
-      [faker.random.objectElement()]: faker.random.uuid(),
-      [faker.random.objectElement()]: faker.date.future(),
-      [faker.random.objectElement()]: faker.date.past()
+      [faker.random.uuid()]: faker.random.uuid(),
+      [faker.random.uuid()]: faker.date.future(),
+      [faker.random.uuid()]: faker.date.past()
     },
 
     [faker.random.uuid()]: {
-      [faker.random.objectElement()]: faker.random.uuid(),
-      [faker.random.objectElement()]: faker.date.future(),
-      [faker.random.objectElement()]: faker.date.past()
+      [faker.random.uuid()]: faker.random.uuid(),
+      [faker.random.uuid()]: faker.date.future(),
+      [faker.random.uuid()]: faker.date.past()
     },
 
     [STORAGE_FEATURE_KEY]: {
