@@ -43,7 +43,24 @@ const defaultConfig: StorageConfig = {
 ```
 
 ## Use
-Import and call `StoreModule.forRoot()`. ion-ngx-storage read and write the application state without any additional configuration. After effects initialization, ion-ngx-storage writes a serialized copy of the root state to the device after each action dispatch.
+Import `StoreModule` or call `StoreModule.forRoot()` with a configuration. ion-ngx-storage read and write the application state without any additional configuration. After effects initialization, ion-ngx-storage writes a serialized copy of the root state to the device after each action dispatch.
+
+### Without Extra Configuration
+
+```typescript
+import { StorageModule } from '@d4h/ion-ngx-storage';
+
+@NgModule({
+  imports: [
+    StoreModule.forRoot(reducers, { metaReducers }),
+    EffectsModule.forRoot(effects),
+    StorageModule
+  ]
+})
+export class AppModule {}
+```
+
+### With Extra Configuration
 
 ```typescript
 import { StorageConfig, StorageModule } from '@d4h/ion-ngx-storage';
