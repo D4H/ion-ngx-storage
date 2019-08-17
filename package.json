@@ -1,6 +1,6 @@
 {
   "name": "@d4h/ion-ngx-storage",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "private": false,
   "description": "Synchronize NgRx state to native device or browser storage.",
   "homepage": "https://d4htechnologies.com/",
@@ -26,7 +26,6 @@
     "@ngrx/store": ">= 8 < 9"
   },
   "dependencies": {
-    "@ionic/storage": "^2.2.0",
-    "traverse": "^0.6.6"
+    "@ionic/storage": "^2.2.0"
   }
 }

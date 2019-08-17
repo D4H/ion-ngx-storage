@@ -2,16 +2,14 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/storage",
   "whitelistedNonPeerDependencies": [
-    "@ionic/storage",
-    "traverse"
+    "@ionic/storage"
   ],
   "lib": {
     "entryFile": "src/public-api.ts",
     "umdModuleIds": {
       "@ionic/storage": "@ionic/storage",
       "@ngrx/effects": "@ngrx/effects",
-      "@ngrx/store": "@ngrx/store",
-      "traverse": "traverse"
+      "@ngrx/store": "@ngrx/store"
     }
   }
 }
