@@ -14,6 +14,7 @@ import {
   ReadResult,
   ReadSuccess,
   StorageEffects,
+  StorageState,
   WriteError,
   WriteSuccess
 } from '../../lib/store';
@@ -25,22 +26,22 @@ import {
   provideStorage
 } from '../../lib/providers';
 
-import { Factory, State } from '../factories';
+import { Factory } from '../factories';
 
 describe('StorageEffects', () => {
   let action: any;
   let actions: ReplaySubject<any>;
   let config: ModuleConfig;
   let effects: StorageEffects;
-  let initialState: State;
+  let initialState: StorageState;
   let key: string;
   let storage: Storage;
-  let store: MockStore<State>;
-  let val: State;
+  let store: MockStore<StorageState>;
+  let val: StorageState;
 
   beforeEach(() => {
     config = Factory.build('ModuleConfig');
-    initialState = Factory.build('TestState');
+    initialState = Factory.build('StorageState');
     key = faker.random.uuid();
     val = initialState;
 
@@ -56,7 +57,7 @@ describe('StorageEffects', () => {
 
     effects = TestBed.get<StorageEffects>(StorageEffects);
     storage = TestBed.get<Storage>(Storage);
-    store = TestBed.get<Store<State>>(Store);
+    store = TestBed.get<Store<StorageState>>(Store);
   });
 
   afterEach(() => {

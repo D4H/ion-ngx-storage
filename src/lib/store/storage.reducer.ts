@@ -21,6 +21,10 @@ export interface State {
   hydrated: boolean;
 }
 
+export interface StorageState {
+  [STORAGE_FEATURE_KEY]: State;
+}
+
 export const initialState: State = {
   hydrated: false
 };
@@ -40,12 +44,12 @@ export function reducer(state: State, action: Action): State {
  * ===========================================================================
  */
 
-export const getStorageState: MemoizedSelector<any, State>
+export const getStorageState: MemoizedSelector<StorageState, State>
   = createFeatureSelector<State>(
     STORAGE_FEATURE_KEY
   );
 
-export const getHydrated: MemoizedSelector<State, boolean>
+export const getHydrated: MemoizedSelector<StorageState, boolean>
   = createSelector(
     getStorageState,
     (state: State): boolean => state.hydrated

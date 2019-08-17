@@ -2,7 +2,13 @@ import { Store, select } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { State, getHydrated, getStorageState } from './storage.reducer';
+import {
+  State,
+  StorageState,
+  getHydrated,
+  getStorageState
+} from './storage.reducer';
+
 import { StorageModule } from '../storage.module';
 
 @Injectable({ providedIn: StorageModule })
@@ -15,5 +21,5 @@ export class StorageFacade {
     select(getHydrated)
   );
 
-  constructor(private readonly store: Store<State>) {}
+  constructor(private readonly store: Store<StorageState>) {}
 }

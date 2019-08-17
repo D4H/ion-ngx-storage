@@ -1,13 +1,13 @@
 import { Factory } from '@d4h/angular';
+
 import { ModuleConfig } from './module-config.factory';
-import { TestState, State } from './test-state.factory';
+import { StorageState } from './storage-state.factory';
 
 Factory.add({
   ModuleConfig,
-  TestState
+  StorageState
 });
 
 export {
-  Factory,
-  State
+  Factory
 };

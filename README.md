@@ -70,10 +70,10 @@ Your application **must** import `StoreModule.forRoot` and `EffectsModule.forRoo
 Internally, ion-ngx-storage operates in the following manner:
 
 1. Register `StorageEffects` and `HydrateEffects`.
-2. Dispatch `READ` from `HydrateEffects` with config payload.
-3. Read state from storage and dispatch `READ_RESULT`.
+2. Dispatch `Read` from `HydrateEffects`.
+3. Read state from storage and dispatch `ReadResult`.
 4. Merge the result into the application state via meta-reducer.
-4. If `{ hydrated: true }` then dispatch `READ_SUCCESS`.
+4. If `{ hydrated: true }` then dispatch `ReadSuccess`.
 
 ## ReadSuccess Action
 ion-ngx-storage makes the `ReadSuccess` action public for use in NgRx effects.
@@ -123,41 +123,68 @@ export class AppFeatureModule {
 }
 ```
 
-## Deferring Store Access
-Although ion-ngx-storage hydrates data from storage once NgRx Effects dispatches `ROOT_EFFECTS_INIT`, the asynchronous nature of Angular and NgRx make it likely your application will attempts to read from the state it is ready. Applications which rely on the NgRx store to determine i.e. authentication status must be modified in a way which defers assessment until after hydration. Take the below example:
-
-1. `AccountFacade` is a [facade](https://medium.com/@thomasburlesonIA/ngrx-facades-better-state-management-82a04b9a1e39). Its `authenticated$` accessors defers emitting a value until after hydration.
-2. [`filter(Boolean)`](https://www.learnrxjs.io/operators/filtering/filter.html) causes only _truthy_ values to emit.
-3. Once this happens, [`switchMap`](https://www.learnrxjs.io/operators/transformation/switchmap.html) replaces the prior observable with a new one that contains the actual assessment of authentication status.
+## Selecting Storage Status
+ion-ngx-storage makes `StorageState` available for cases where you need to select or extend the state:
 
 ```typescript
-import { getHydrated } from '@d4h/ion-ngx-storage';
-import { getAuthentication } from '@app/store/account';
+import { StorageState } from '@d4h/ion-ngx-storage';
+
+export interface AppState extends StorageState {
+  // ...
+}
+```
+
+After this you can employ the `getHydrated` and `getStorageState` selectors.
+
+## Defer Store Access
+Although ion-ngx-storage hydrates data from storage once NgRx Effects dispatches `ROOT_EFFECTS_INIT`, the asynchronous nature of Angular and NgRx make it likely your application will attempts to read from the state it is ready. Applications which rely on the NgRx store to determine i.e. authentication status must be modified in a way which defers assessment until after hydration.
+
+In both cases below:
+
+1. [`filter(Boolean)`](https://www.learnrxjs.io/operators/filtering/filter.html) leads to only truthy values emitting.
+2. Once this happens, [`switchMap`](https://www.learnrxjs.io/operators/transformation/switchmap.html) replaces the prior observable with a new one that contains the actual assessment of authentication status.
+
+### AccountFacade
+
+```typescript
+import { StorageFacade } from '@d4h/ion-ngx-storage';
 
 @Injectable({ providedIn: 'root' })
 export class AccountFacade {
-  readonly authenticated$: Observable<boolean> = this.store.pipe(
-    select(getHydrated),
+  readonly authenticated$: Observable<boolean> = this.storage.hydrated$.pipe(
     filter(Boolean),
-    switchMap(() => this.store.select(getAuthentication))
+    switchMap(() => this.store.select(getAuthenticated))
   );
 
-  constructor(private readonly store: Store<State>) {}
+  constructor(
+    private readonly storage: StorageFacade,
+    private readonly store: Store<AppState>
+  ) {}
 }
 ```
+
+### AuthenticatedGuard
 
 ```typescript
 import { AccountFacade } from '@app/store/account';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticatedGuard implements CanActivate {
+  private readonly authenticated$: Observable<boolean>;
+
   constructor(
     private readonly accounts: AccountFacade,
     private readonly router: Router
-  ) {}
+    ) {
+      this.authenticated$ = this.store.pipe(
+        select(getHydrated),
+        filter(Boolean),
+        switchMap(() => this.store.select(getAuthentication))
+      );
+    }
 
   canActivate(): Observable<boolean | UrlTree> {
-    return this.accounts.authenticated$.pipe(
+    return this.authenticated$.pipe(
       map((authenticated: boolean): boolean | UrlTree => {
         return authenticated || this.router.parseUrl('/login');
       })

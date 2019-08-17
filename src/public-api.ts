@@ -14,6 +14,7 @@ export {
   ReadError,
   ReadSuccess,
   StorageFacade,
+  StorageState,
   WriteError,
   getHydrated,
   getStorageState

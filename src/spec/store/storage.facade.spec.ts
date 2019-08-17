@@ -3,20 +3,26 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Store } from '@ngrx/store';
 import { TestBed } from '@angular/core/testing';
 
-import { Factory, State } from '../factories';
+import {
+  StorageFacade,
+  StorageState,
+  getHydrated,
+  getStorageState
+} from '../../lib/store';
+
+import { Factory } from '../factories';
 import { STORAGE_FEATURE_KEY } from '../../lib/providers';
-import { StorageFacade, getHydrated, getStorageState } from '../../lib/store';
 
 describe('StorageFacade', () => {
   let facade: StorageFacade;
-  let initialState: State;
-  let store: MockStore<State>;
+  let initialState: StorageState;
+  let store: MockStore<StorageState>;
   let value: any;
 
   beforeEach(() => {
     value = faker.random.uuid();
 
-    initialState = Factory.build('TestState', {
+    initialState = Factory.build('StorageState', {
       [STORAGE_FEATURE_KEY]: { hydrated: value }
     });
 
@@ -27,7 +33,7 @@ describe('StorageFacade', () => {
       ]
     });
 
-    store = TestBed.get<Store<State>>(Store);
+    store = TestBed.get<Store<StorageState>>(Store);
     facade = TestBed.get(StorageFacade);
   });
 
