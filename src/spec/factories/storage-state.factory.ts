@@ -1,6 +1,6 @@
 import faker from 'faker';
 
-import { STORAGE_FEATURE_KEY } from '../../lib/providers';
+import { STORAGE_REDUCER_KEY } from '../../lib/providers';
 import { State, StorageState } from '../../lib/store';
 
 /**
@@ -23,7 +23,7 @@ export function StorageState(attributes: object = {}): StorageState {
       [faker.random.uuid()]: faker.date.past()
     },
 
-    [STORAGE_FEATURE_KEY]: {
+    [STORAGE_REDUCER_KEY]: {
       hydrated: false
     },
 

@@ -10,7 +10,7 @@ import {
 
 import { InjectionToken } from '@angular/core';
 import { ReadResult } from './storage.actions';
-import { STORAGE_FEATURE_KEY } from '../providers';
+import { STORAGE_REDUCER_KEY } from '../providers';
 
 /**
  * Storage State and Reducer
@@ -22,7 +22,7 @@ export interface State {
 }
 
 export interface StorageState {
-  [STORAGE_FEATURE_KEY]: State;
+  [STORAGE_REDUCER_KEY]: State;
 }
 
 export const initialState: State = {
@@ -46,7 +46,7 @@ export function reducer(state: State, action: Action): State {
 
 export const getStorageState: MemoizedSelector<StorageState, State>
   = createFeatureSelector<State>(
-    STORAGE_FEATURE_KEY
+    STORAGE_REDUCER_KEY
   );
 
 export const getHydrated: MemoizedSelector<StorageState, boolean>

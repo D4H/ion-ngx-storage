@@ -22,7 +22,7 @@ import {
 import {
   ModuleConfig,
   STORAGE_CONFIG,
-  STORAGE_FEATURE_KEY,
+  STORAGE_REDUCER_KEY,
   provideStorage
 } from '../../lib/providers';
 
@@ -133,7 +133,7 @@ describe('StorageEffects', () => {
       let data;
 
       store.setState({ ...initialState,
-        [STORAGE_FEATURE_KEY]: { hydrated: false }
+        [STORAGE_REDUCER_KEY]: { hydrated: false }
       });
 
       actions = new ReplaySubject(1);
@@ -147,7 +147,7 @@ describe('StorageEffects', () => {
     it('should dispatch with ReadSuccess() when storage is hydrated', done => {
       store.setState({
         ...initialState,
-        [STORAGE_FEATURE_KEY]: { hydrated: true }
+        [STORAGE_REDUCER_KEY]: { hydrated: true }
       });
 
       action = ReadSuccess();
@@ -167,7 +167,7 @@ describe('StorageEffects', () => {
 
       store.setState({
         ...initialState,
-        [STORAGE_FEATURE_KEY]: { hydrated: false }
+        [STORAGE_REDUCER_KEY]: { hydrated: false }
       });
 
       actions = new ReplaySubject(1);
@@ -183,7 +183,7 @@ describe('StorageEffects', () => {
 
       store.setState({
         ...initialState,
-        [STORAGE_FEATURE_KEY]: { hydrated: true }
+        [STORAGE_REDUCER_KEY]: { hydrated: true }
       });
 
       Object.values(ActionTypes).forEach(type => {
@@ -201,7 +201,7 @@ describe('StorageEffects', () => {
 
       store.setState({
         ...initialState,
-        [STORAGE_FEATURE_KEY]: { hydrated: true }
+        [STORAGE_REDUCER_KEY]: { hydrated: true }
       });
 
       storage.get(config.name).then(value => {
@@ -221,7 +221,7 @@ describe('StorageEffects', () => {
 
       store.setState({
         ...initialState,
-        [STORAGE_FEATURE_KEY]: { hydrated: true }
+        [STORAGE_REDUCER_KEY]: { hydrated: true }
       });
 
       storage.get(config.name).then(value => {
