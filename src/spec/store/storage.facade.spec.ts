@@ -11,7 +11,7 @@ import {
 } from '../../lib/store';
 
 import { Factory } from '../factories';
-import { STORAGE_FEATURE_KEY } from '../../lib/providers';
+import { STORAGE_REDUCER_KEY } from '../../lib/providers';
 
 describe('StorageFacade', () => {
   let facade: StorageFacade;
@@ -23,7 +23,7 @@ describe('StorageFacade', () => {
     value = faker.random.uuid();
 
     initialState = Factory.build('StorageState', {
-      [STORAGE_FEATURE_KEY]: { hydrated: value }
+      [STORAGE_REDUCER_KEY]: { hydrated: value }
     });
 
     TestBed.configureTestingModule({

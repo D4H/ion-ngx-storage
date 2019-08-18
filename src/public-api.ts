@@ -4,6 +4,7 @@
 
 export {
   STORAGE_CONFIG,
+  STORAGE_REDUCER_KEY,
   ModuleConfig as StorageConfig,
   StateTransform as StorageStateTransform
 } from './lib/providers';

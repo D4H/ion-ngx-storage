@@ -8,7 +8,7 @@ import { StoreModule } from '@ngrx/store';
 import {
   ModuleConfig,
   STORAGE_CONFIG,
-  STORAGE_FEATURE_KEY,
+  STORAGE_REDUCER_KEY,
   defaultConfig,
   provideStorage
 } from './providers';
@@ -19,7 +19,7 @@ import { storageMetaReducer } from './store/storage.meta';
 
 @NgModule({
   imports: [
-    StoreModule.forFeature(STORAGE_FEATURE_KEY, reducer),
+    StoreModule.forFeature(STORAGE_REDUCER_KEY, reducer),
     EffectsModule.forFeature([StorageEffects])
   ],
   providers: [

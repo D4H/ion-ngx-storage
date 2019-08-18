@@ -9,7 +9,7 @@ import {
   reducer
 } from '../../lib/store';
 
-import { STORAGE_FEATURE_KEY } from '../../lib/providers';
+import { STORAGE_REDUCER_KEY } from '../../lib/providers';
 
 describe('Storage Reducer', () => {
   describe('reducer', () => {
@@ -74,9 +74,9 @@ describe('Storage Reducer', () => {
     });
   });
 
-  describe('STORAGE_FEATURE_KEY', () => {
+  describe('STORAGE_REDUCER_KEY', () => {
     it('should equal the comparison value', () => {
-      expect(STORAGE_FEATURE_KEY).toEqual('ion_ngx_storage');
+      expect(STORAGE_REDUCER_KEY).toEqual('ion_ngx_storage');
     });
   });
 });
@@ -86,7 +86,7 @@ describe('Storage Selectors', () => {
 
   beforeEach(() => {
     state = {
-      [STORAGE_FEATURE_KEY]: initialState,
+      [STORAGE_REDUCER_KEY]: initialState,
 
       [faker.random.uuid()]: {
         [faker.random.uuid()]: faker.random.uuid()
