@@ -14,18 +14,13 @@ export const STORAGE_REDUCER_KEY = 'ion_ngx_storage';
  * @see https://ionicframework.com/docs/building/storage
  */
 
-export interface StateTransform {
-  read<T>(state: T): T;
-  write<T>(state: T): T;
-}
-
-export interface ModuleConfig<T extends object = {}> {
+export interface Config<T extends object = {}> {
   features?: Array<string>;
   name: string;
   storage?: StorageConfig;
 }
 
-export const defaultConfig: ModuleConfig = {
+export const defaultConfig: Config = {
   features: [],
   name: STORAGE_REDUCER_KEY,
 
@@ -46,7 +41,7 @@ export const STORAGE_CONFIG = new InjectionToken<StorageConfig>(
  */
 
 export function provideStorage(
-  config: Partial<ModuleConfig> = defaultConfig
+  config: Partial<Config> = defaultConfig
 ): Storage {
   return new Storage(config.storage);
 }

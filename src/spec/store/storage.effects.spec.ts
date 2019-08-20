@@ -20,7 +20,7 @@ import {
 } from '../../lib/store';
 
 import {
-  ModuleConfig,
+  Config,
   STORAGE_CONFIG,
   STORAGE_REDUCER_KEY,
   provideStorage
@@ -31,7 +31,7 @@ import { Factory } from '../factories';
 describe('StorageEffects', () => {
   let action: any;
   let actions: ReplaySubject<any>;
-  let config: ModuleConfig;
+  let config: Config;
   let effects: StorageEffects;
   let initialState: StorageState;
   let key: string;

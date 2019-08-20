@@ -6,7 +6,7 @@ import { Storage } from '@ionic/storage';
 import { StoreModule } from '@ngrx/store';
 
 import {
-  ModuleConfig,
+  Config,
   STORAGE_CONFIG,
   STORAGE_REDUCER_KEY,
   defaultConfig,
@@ -39,7 +39,7 @@ import { storageMetaReducer } from './store/storage.meta';
   ]
 })
 export class StorageModule {
-  static forRoot(config: ModuleConfig = defaultConfig): ModuleWithProviders {
+  static forRoot(config: Config = defaultConfig): ModuleWithProviders {
     return {
       ngModule: StorageModule,
       providers: [

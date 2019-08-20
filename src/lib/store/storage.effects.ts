@@ -26,7 +26,7 @@ import {
 } from './storage.actions';
 
 import {
-  ModuleConfig,
+  Config,
   STORAGE_CONFIG,
   STORAGE_REDUCER_KEY
 } from '../providers/config.provider';
@@ -85,7 +85,7 @@ export class StorageEffects implements OnInitEffects {
   ));
 
   constructor(
-    @Inject(STORAGE_CONFIG) private readonly config: ModuleConfig,
+    @Inject(STORAGE_CONFIG) private readonly config: Config,
     private readonly actions$: Actions,
     private readonly storage: Storage,
     private readonly store$: Store<any>
