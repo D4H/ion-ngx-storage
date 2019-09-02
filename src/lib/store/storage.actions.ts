@@ -14,10 +14,6 @@ export const Clear = createAction(
   ActionTypes.CLEAR
 );
 
-export const ReadSuccess = createAction(
-  ActionTypes.READ_SUCCESS
-);
-
 export const Read = createAction(
   ActionTypes.READ
 );
@@ -30,6 +26,10 @@ export const ReadError = createAction(
 export const ReadResult = createAction(
   ActionTypes.READ_RESULT,
   props<{ value: any }>()
+);
+
+export const ReadSuccess = createAction(
+  ActionTypes.READ_SUCCESS
 );
 
 export const WriteError = createAction(
