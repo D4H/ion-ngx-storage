@@ -70,7 +70,7 @@ describe('StorageEffects', () => {
       actions.next(Clear());
     });
 
-    it('should return ReadResult action', done => {
+    it('should dispatch ReadResult', done => {
       storage.set(key, val).then(() => {
         effects.clear$.subscribe(result => {
           expect(result).toEqual(Read());
@@ -92,7 +92,7 @@ describe('StorageEffects', () => {
   });
 
   describe('read$', () => {
-    it('should return ReadResult action', done => {
+    it('should dispatch ReadResult', done => {
       action = ReadResult({ value: null });
       actions = new ReplaySubject(1);
       actions.next(Read());
