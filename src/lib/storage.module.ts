@@ -14,6 +14,7 @@ import {
 } from './providers';
 
 import { StorageEffects } from './store/storage.effects';
+import { StorageService } from './services/storage.service';
 import { initialState, reducer } from './store/storage.reducer';
 import { storageMetaReducer } from './store/storage.meta';
 
@@ -23,6 +24,7 @@ import { storageMetaReducer } from './store/storage.meta';
     EffectsModule.forFeature([StorageEffects])
   ],
   providers: [
+    StorageService,
     {
       provide: META_REDUCERS,
       multi: true,

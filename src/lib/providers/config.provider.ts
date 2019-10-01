@@ -40,8 +40,6 @@ export const STORAGE_CONFIG = new InjectionToken<StorageConfig>(
  * @see https://stackoverflow.com/a/43246735/1433400
  */
 
-export function provideStorage(
-  config: Partial<Config> = defaultConfig
-): Storage {
+export function provideStorage(config: Partial<Config> = defaultConfig): Storage {
   return new Storage(config.storage);
 }

@@ -1,9 +1,9 @@
 import faker from 'faker';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { ReplaySubject } from 'rxjs';
-import { Storage } from '@ionic/storage';
+import { Observable, isObservable, of, throwError } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { cold, hot } from 'jasmine-marbles';
 import { provideMockActions } from '@ngrx/effects/testing';
 
 import {
@@ -16,226 +16,239 @@ import {
   StorageEffects,
   StorageState,
   WriteError,
-  WriteSuccess
+  WriteSuccess,
+  getHydrated,
+  initialState
 } from '../../lib/store';
 
-import {
-  Config,
-  STORAGE_CONFIG,
-  STORAGE_REDUCER_KEY,
-  provideStorage
-} from '../../lib/providers';
+import { Config, STORAGE_CONFIG, defaultConfig } from '../../lib/providers';
+import { StorageService } from '../../lib/services';
 
-import { Factory } from '../factories';
+const moduleConfig = ({
+  features = [],
+  name = faker.internet.domainWord(),
+  storage = { name: faker.internet.domainWord() }
+} = defaultConfig) => ({ features, name, storage });
 
 describe('StorageEffects', () => {
-  let action: any;
-  let actions: ReplaySubject<any>;
+  let actions$: Observable<any>;
   let config: Config;
   let effects: StorageEffects;
-  let initialState: StorageState;
-  let key: string;
-  let storage: Storage;
+  let result$: Observable<any>;
+  let storage;
   let store: MockStore<StorageState>;
-  let val: StorageState;
+  let value: string;
 
   beforeEach(() => {
-    config = Factory.build('ModuleConfig');
-    initialState = Factory.build('StorageState');
-    key = faker.random.uuid();
-    val = initialState;
+    config = moduleConfig();
+    value = faker.random.uuid();
 
     TestBed.configureTestingModule({
       providers: [
         StorageEffects,
-        provideMockActions(() => actions),
-        provideMockStore({ initialState }),
-        { provide: STORAGE_CONFIG, useValue: config },
-        { provide: Storage, useFactory: provideStorage, deps: [STORAGE_CONFIG] }
+        provideMockStore(),
+        provideMockActions(() => actions$),
+        {
+          provide: STORAGE_CONFIG,
+          useValue: config
+        },
+        {
+          provide: StorageService,
+          useValue: jasmine.createSpyObj('storage', ['clear', 'get', 'set'])
+        }
       ]
     });
 
-    effects = TestBed.get<StorageEffects>(StorageEffects);
-    storage = TestBed.get<Storage>(Storage);
-    store = TestBed.get<Store<StorageState>>(Store);
+    effects = TestBed.get(StorageEffects);
+    storage = TestBed.get(StorageService);
+    store = TestBed.get(Store);
   });
 
-  afterEach(() => {
-    storage.clear();
+  describe('ngrxOnInitEffects', () => {
+    it('should be a function accessor', () => {
+      expect(typeof effects.ngrxOnInitEffects).toBe('function');
+    });
+
+    it('should return Read()', () => {
+      expect(effects.ngrxOnInitEffects()).toEqual(Read());
+    });
   });
 
   describe('clear$', () => {
-    beforeEach(() => {
-      actions = new ReplaySubject(1);
-      actions.next(Clear());
+    it('should be an observable accessor', () => {
+      expect(isObservable(effects.clear$)).toBe(true);
     });
 
-    it('should dispatch ReadResult', done => {
-      storage.set(key, val).then(() => {
-        effects.clear$.subscribe(result => {
-          expect(result).toEqual(Read());
-          done();
-        });
-      });
-    });
+    it('should call storage.clear dispatch Read', () => {
+      storage.clear.and.returnValue(of(null));
 
-    it('should clear storage', done => {
-      storage.set(key, val).then(() => {
-        effects.clear$.subscribe(() => {
-          storage.get(key).then(result => {
-            expect(result).toBe(null);
-            done();
-          });
-        });
+      actions$ = hot('-a---', {
+        a: Clear()
       });
+
+      result$ = cold('-b', {
+        b: Read()
+      });
+
+      expect(effects.clear$).toBeObservable(result$);
+      expect(storage.clear).toHaveBeenCalled();
     });
   });
 
   describe('read$', () => {
-    it('should dispatch ReadResult', done => {
-      action = ReadResult({ value: null });
-      actions = new ReplaySubject(1);
-      actions.next(Read());
-
-      effects.read$.subscribe(result => {
-        expect(result).toEqual(action);
-        done();
-      });
+    it('should be an observable accessor', () => {
+      expect(isObservable(effects.read$)).toBe(true);
     });
 
-    it('should return value of key from storage', done => {
-      action = ReadResult({ value: val });
-      actions = new ReplaySubject(1);
-      actions.next(Read());
+    it('should call storage.get and dispatch ReadResult', () => {
+      storage.get.and.returnValue(of(value));
 
-      storage.set(config.name, val).then(() => {
-        effects.read$.subscribe(result => {
-          expect(result).toEqual(action);
-          done();
-        });
+      actions$ = hot('-a---', {
+        a: Read()
       });
+
+      result$ = cold('-b', {
+        b: ReadResult({ value })
+      });
+
+      expect(effects.read$).toBeObservable(result$);
+      expect(storage.get).toHaveBeenCalledWith(config.name);
+    });
+
+    it('should dispatch ReadError upon a storage error', () => {
+      storage.get.and.returnValue(throwError({ error: value }));
+
+      actions$ = hot('-a---', {
+        a: Read()
+      });
+
+      result$ = cold('-b', {
+        b: ReadError({ error: { error: value } })
+      });
+
+      expect(effects.read$).toBeObservable(result$);
+      expect(storage.get).toHaveBeenCalledWith(config.name);
     });
   });
 
   describe('readResult$', () => {
-    it('should verify fakeAsync works', fakeAsync(() => {
-      const promise = new Promise(resolve => {
-        setTimeout(resolve, 10);
+    it('should be an observable accessor', () => {
+      expect(isObservable(effects.readResult$)).toBe(true);
+    });
+
+    describe('getHydrated is falsy', () => {
+      it('should not dispatch ReadSuccess', () => {
+        store.overrideSelector(getHydrated, false);
+
+        actions$ = hot('-a---', {
+          a: ReadResult({ value })
+        });
+
+        result$ = cold('---', {
+          b: ReadSuccess()
+        });
+
+        expect(effects.readResult$).toBeObservable(result$);
+      });
+    });
+
+    describe('getHydrated is truthy', () => {
+      beforeEach(() => {
+        store.overrideSelector(getHydrated, true);
       });
 
-      let done;
-      promise.then(() => done = true);
-      tick(50);
-      expect(done).toBeTruthy();
-    }));
+      it('should dispatch ReadSuccess', () => {
+        actions$ = hot('-a---', {
+          a: ReadResult({ value })
+        });
 
-    it('should not dispatch ReadSuccess() when storage is not hydrated', fakeAsync(() => {
-      let data;
+        result$ = cold('-(b|)', {
+          b: ReadSuccess()
+        });
 
-      store.setState({ ...initialState,
-        [STORAGE_REDUCER_KEY]: { hydrated: false }
-      });
-
-      actions = new ReplaySubject(1);
-      actions.next({ type: ActionTypes.READ_RESULT });
-
-      effects.readResult$.subscribe(result => data = result);
-      tick(50);
-      expect(data).toBe(undefined);
-    }));
-
-    it('should dispatch with ReadSuccess() when storage is hydrated', done => {
-      store.setState({
-        ...initialState,
-        [STORAGE_REDUCER_KEY]: { hydrated: true }
-      });
-
-      action = ReadSuccess();
-      actions = new ReplaySubject(1);
-      actions.next({ type: ActionTypes.READ_RESULT });
-
-      effects.readResult$.subscribe(result => {
-        expect(result).toEqual(action);
-        done();
+        expect(effects.readResult$).toBeObservable(result$);
       });
     });
   });
 
   describe('write$', () => {
-    it('should not dispatch when storage is not hydrated', fakeAsync(() => {
-      let data;
+    it('should be an observable accessor', () => {
+      expect(isObservable(effects.write$)).toBe(true);
+    });
 
-      store.setState({
-        ...initialState,
-        [STORAGE_REDUCER_KEY]: { hydrated: false }
+    describe('getHydrated is falsy', () => {
+      beforeEach(() => {
+        store.overrideSelector(getHydrated, false);
+        storage.set.and.returnValue(of(value));
       });
 
-      actions = new ReplaySubject(1);
-      actions.next({ type: faker.random.uuid() });
+      it('should not call storage.set or dispatch WriteSuccess', () => {
+        actions$ = hot('-a---', {
+          a: { type: faker.random.uuid() }
+        });
 
-      effects.write$.subscribe(result => data = result);
-      tick(50);
-      expect(data).toBe(undefined);
-    }));
+        result$ = cold('---', {
+          b: WriteSuccess()
+        });
 
-    it('should not dispatch when storage is hydrated but action is internal', fakeAsync(() => {
-      let data;
+        expect(effects.write$).toBeObservable(result$);
+        expect(storage.set).not.toHaveBeenCalled();
+      });
+    });
 
-      store.setState({
-        ...initialState,
-        [STORAGE_REDUCER_KEY]: { hydrated: true }
+    describe('getHydrated is truthy', () => {
+      beforeEach(() => {
+        store.overrideSelector(getHydrated, true);
+        store.setState({ [value]: value } as any);
+        storage.set.and.returnValue(of(value));
       });
 
-      Object.values(ActionTypes).forEach(type => {
-        actions = new ReplaySubject(1);
-        actions.next({ type });
-        effects.write$.subscribe(result => data = result);
-        tick(50);
-        expect(data).toBe(undefined);
-      });
-    }));
+      it('should call storage.set and dispatch WriteSuccess with any external action', () => {
+        actions$ = hot('-a---', {
+          a: { type: faker.random.uuid() }
+        });
 
-    it('should dispatch WriteSuccess() when hydrated and action is external', done => {
-      action = WriteSuccess();
-      actions = new ReplaySubject(1);
+        result$ = cold('-(b)', {
+          b: WriteSuccess()
+        });
 
-      store.setState({
-        ...initialState,
-        [STORAGE_REDUCER_KEY]: { hydrated: true }
+        expect(effects.write$).toBeObservable(result$);
+        expect(storage.set).toHaveBeenCalledWith(config.name, { [value]: value });
       });
 
-      storage.get(config.name).then(value => {
-        expect(value).toBe(null);
-        actions.next({ type: faker.random.uuid() });
+      describe('internal actions', () => {
+        Object.values(ActionTypes).forEach(type => {
+          it(`should not call storage.set or dispatch WriteSuccess with ${type}`, () => {
+            actions$ = hot('-a---', {
+              a: { type }
+            });
 
-        effects.write$.subscribe(result => {
-          expect(result).toEqual(action);
-          done();
+            result$ = cold('---', {
+              b: WriteSuccess()
+            });
+
+            expect(effects.write$).toBeObservable(result$);
+            expect(storage.set).not.toHaveBeenCalled();
+          });
         });
       });
     });
 
-    it('should copy the state to the store', done => {
-      action = WriteSuccess();
-      actions = new ReplaySubject(1);
 
-      store.setState({
-        ...initialState,
-        [STORAGE_REDUCER_KEY]: { hydrated: true }
-      });
+    describe('storage error', () => {
+      it('should dispatch WriteError', () => {
+        store.overrideSelector(getHydrated, true);
+        storage.set.and.returnValue(throwError({ error: value }));
 
-      storage.get(config.name).then(value => {
-        expect(value).toBe(null);
-        actions.next({ type: faker.random.uuid() });
-
-        effects.write$.subscribe(() => {
-          store.subscribe(state => {
-            storage.get(config.name).then(result => {
-              expect(result).toEqual(state);
-              done();
-            });
-          });
+        actions$ = hot('-a---', {
+          a: { type: faker.random.uuid() }
         });
+
+        result$ = cold('-(b)', {
+          b: WriteError({ error: { error: value } })
+        });
+
+        expect(effects.write$).toBeObservable(result$);
       });
     });
   });

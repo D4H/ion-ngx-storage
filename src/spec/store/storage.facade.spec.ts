@@ -2,63 +2,55 @@ import faker from 'faker';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Store } from '@ngrx/store';
 import { TestBed } from '@angular/core/testing';
+import { isObservable } from 'rxjs';
 
-import {
-  StorageFacade,
-  StorageState,
-  getHydrated,
-  getStorageState
-} from '../../lib/store';
-
-import { Factory } from '../factories';
 import { STORAGE_REDUCER_KEY } from '../../lib/providers';
+import { StorageFacade, StorageState, getHydrated, getStorageState } from '../../lib/store';
 
 describe('StorageFacade', () => {
   let facade: StorageFacade;
-  let initialState: StorageState;
   let store: MockStore<StorageState>;
-  let value: any;
+  let value: boolean;
 
   beforeEach(() => {
-    value = faker.random.uuid();
-
-    initialState = Factory.build('StorageState', {
-      [STORAGE_REDUCER_KEY]: { hydrated: value }
-    });
+    value = faker.random.boolean();
 
     TestBed.configureTestingModule({
       providers: [
         StorageFacade,
-        provideMockStore({ initialState })
+        provideMockStore({
+          selectors: [
+            { selector: getHydrated, value },
+            { selector: getStorageState, value: { hydrated: value } }
+          ]
+        })
       ]
     });
 
-    store = TestBed.get<Store<StorageState>>(Store);
     facade = TestBed.get(StorageFacade);
+    store = TestBed.get(Store);
   });
 
   describe('state$', () => {
-    it('should equal the storage state', done => {
+    it('should be an observable accessor', () => {
+      expect(isObservable(facade.state$)).toBe(true);
+    });
+
+    it('should equal the storage state', () => {
       facade.state$.subscribe(result => {
         expect(result).toEqual({ hydrated: value });
-
-        store.select(getStorageState).subscribe(selected => {
-          expect(selected).toEqual(result);
-          done();
-        });
       });
     });
   });
 
   describe('hydrated$', () => {
-    it('should equal the hydrated value', done => {
+    it('should be an observable accessor', () => {
+      expect(isObservable(facade.hydrated$)).toBe(true);
+    });
+
+    it('should equal the hydrated value', () => {
       facade.hydrated$.subscribe(result => {
         expect(result).toEqual(value);
-
-        store.select(getHydrated).subscribe(selected => {
-          expect(selected).toEqual(result);
-          done();
-        });
       });
     });
   });

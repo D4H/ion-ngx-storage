@@ -12,6 +12,18 @@ import {
 import { STORAGE_REDUCER_KEY } from '../../lib/providers';
 
 describe('Storage Reducer', () => {
+  describe('initialState', () => {
+    it('should equal the comparison value', () => {
+      expect(initialState).toEqual({ hydrated: false });
+    });
+  });
+
+  describe('STORAGE_REDUCER_KEY', () => {
+    it('should equal the comparison value', () => {
+      expect(STORAGE_REDUCER_KEY).toEqual('ion_ngx_storage');
+    });
+  });
+
   describe('reducer', () => {
     it('should return the previous state with any action', () => {
       expect(reducer(initialState, { type: faker.random.uuid() }))
@@ -67,46 +79,26 @@ describe('Storage Reducer', () => {
       });
     });
   });
-
-  describe('initialState', () => {
-    it('should equal the comparison value', () => {
-      expect(initialState).toEqual({ hydrated: false });
-    });
-  });
-
-  describe('STORAGE_REDUCER_KEY', () => {
-    it('should equal the comparison value', () => {
-      expect(STORAGE_REDUCER_KEY).toEqual('ion_ngx_storage');
-    });
-  });
 });
 
 describe('Storage Selectors', () => {
-  let state;
+  let hydrated: boolean;
+  let state: any;
 
   beforeEach(() => {
-    state = {
-      [STORAGE_REDUCER_KEY]: initialState,
-
-      [faker.random.uuid()]: {
-        [faker.random.uuid()]: faker.random.uuid()
-      },
-
-      [faker.random.uuid()]: {
-        [faker.random.uuid()]: faker.random.uuid()
-      }
-    };
+    hydrated = faker.random.boolean();
+    state = { [STORAGE_REDUCER_KEY]: { hydrated } };
   });
 
   describe('getStorageState', () => {
     it('should return the feature state', () => {
-      expect(getStorageState(state)).toEqual(initialState);
+      expect(getStorageState.projector(state)).toEqual(state);
     });
   });
 
   describe('getHydrated', () => {
     it('should return hydrated status', () => {
-      expect(getHydrated(state)).toBe(initialState.hydrated);
+      expect(getHydrated.projector({ hydrated })).toBe(hydrated);
     });
   });
 });
