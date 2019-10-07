@@ -12,7 +12,6 @@ ion-ngx-storage is a module for Ionic 4/Angular applications which copies an app
 
 ```typescript
 interface StorageConfig<T extends object = {}> {
-  features?: Array<string>;
   name: string;
 
   storage?: {
@@ -25,7 +24,6 @@ interface StorageConfig<T extends object = {}> {
 }
 ```
 
-* `features?: Array<string>`: Optional array of features to store to the device instead of the entire application state.
 * `name: string`: The name of your application. Used internally as an Ionic Storage table key. All data is stored _per application_ as a single object.
 * `storage?: StorageConfig`: [Ionic Storage](https://ionicframework.com/docs/building/storage#configuring-storage) configuration.
 
@@ -33,7 +31,6 @@ interface StorageConfig<T extends object = {}> {
 
 ```typescript
 const defaultConfig: StorageConfig = {
-  features: [],
   name: 'ion_ngx_storage',
 
   storage: {
@@ -67,8 +64,7 @@ import { StorageConfig, StorageModule } from '@d4h/ion-ngx-storage';
 
 // Optional configuration
 const storageConfig: StorageConfig<AppState> = {
-  name: 'my_application_name',
-  features: ['foo']
+  name: 'my_application_name'
 };
 
 @NgModule({
@@ -233,7 +229,7 @@ class LoginEffects {
 ```
 
 ## Support and Feedback
-Feel free to email <support@d4h.org> or tweet [@d4h](https://twitter.com/d4h/).
+Feel free to email <support@d4h.org>, [open an issue](https://github.com/D4H/ion-ngx-storage/issues/new) or tweet [@d4h](https://twitter.com/d4h/).
 
 ## License
 Copyright (C) 2019 [D4H](https://d4htechnologies.com/)

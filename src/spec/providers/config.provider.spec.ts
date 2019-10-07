@@ -11,7 +11,6 @@ describe('Module Provider', () => {
   describe('defaultConfig', () => {
     it('should equal comparison configuration', () => {
       const comparisonConfig = {
-        features: [],
         name: STORAGE_REDUCER_KEY,
 
         storage: {

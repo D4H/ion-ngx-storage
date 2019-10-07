@@ -15,13 +15,11 @@ export const STORAGE_REDUCER_KEY = 'ion_ngx_storage';
  */
 
 export interface Config<T extends object = {}> {
-  features?: Array<string>;
   name: string;
   storage?: StorageConfig;
 }
 
 export const defaultConfig: Config = {
-  features: [],
   name: STORAGE_REDUCER_KEY,
 
   storage: {

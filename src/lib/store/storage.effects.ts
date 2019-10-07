@@ -75,8 +75,6 @@ export class StorageEffects implements OnInitEffects {
    *
    *  1. The action's type is external to ion-ngx-storage. See internalTypes.
    *  2. getHydrated is truthy. See hydrated$.
-   *
-   * TODO: Reimplement config.features slicing!
    */
 
   write$: Observable<Action> = createEffect(() => this.actions$.pipe(

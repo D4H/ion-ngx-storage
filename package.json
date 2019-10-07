@@ -1,9 +1,13 @@
 {
   "name": "@d4h/ion-ngx-storage",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": false,
-  "description": "Synchronize NgRx state to native device or browser storage.",
+  "description": "Synchronize an NgRx state to device storage.",
   "homepage": "https://d4htechnologies.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/D4H/ion-ngx-storage"
+  },
   "author": {
     "name": "Mark Grealish",
     "email": "mark.grealish@d4h.org",
