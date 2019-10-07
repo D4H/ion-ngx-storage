@@ -25,10 +25,9 @@ import { Config, STORAGE_CONFIG, defaultConfig } from '../../lib/providers';
 import { StorageService } from '../../lib/services';
 
 const moduleConfig = ({
-  features = [],
   name = faker.internet.domainWord(),
   storage = { name: faker.internet.domainWord() }
-} = defaultConfig) => ({ features, name, storage });
+} = defaultConfig) => ({ name, storage });
 
 describe('StorageEffects', () => {
   let actions$: Observable<any>;
