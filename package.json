@@ -1,6 +1,6 @@
 {
   "name": "@d4h/ion-ngx-storage",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "private": false,
   "description": "Synchronize an NgRx state to device storage.",
   "homepage": "https://d4htechnologies.com/",
